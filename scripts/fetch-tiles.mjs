@@ -62,3 +62,6 @@ for (const font of FONTS) {
 const meta = { build, bbox: BBOX, maxZoom: MAX_ZOOM, generatedAt: new Date().toISOString() };
 await writeFile('public/tiles/meta.json', JSON.stringify(meta, null, 2) + '\n');
 console.log(`Build ${build}: ${count} teselas, ${(bytes / 1024).toFixed(0)} KB`);
+
+// El contorno del campus sale de las mismas teselas.
+await import('./extract-boundary.mjs');

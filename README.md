@@ -15,7 +15,7 @@ npm run build    # compilación de producción en dist/
 
 ## Mapa base
 
-Las teselas del campus están en `public/tiles/` y las fuentes de las etiquetas en `public/fonts/` (datos de OpenStreetMap vía Protomaps). Para actualizarlas con los datos más recientes de OSM:
+Las teselas del campus están en `public/tiles/` y las fuentes de las etiquetas en `public/fonts/` (datos de OpenStreetMap vía Protomaps). El contorno del campus (`src/features/map/campusBoundary.json`) sale de las mismas teselas: la app lo usa para atenuar los alrededores, abrir con el campus completo a la vista y limitar cuánto se puede alejar o desplazar el mapa. Para actualizar todo con los datos más recientes de OSM:
 
 ```bash
 npm run fetch-tiles

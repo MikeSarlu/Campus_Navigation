@@ -7,7 +7,8 @@ import { pointAlong, sliceLineFrom } from '../../core/routing/planar';
 import { resultLocation } from '../../core/search';
 import { useNav } from '../navigation/navStore';
 import { resultTitle } from '../search/resultText';
-import { CAMPUS_BBOX, CAMPUS_CENTER, campusStyle } from './campusStyle';
+import campusBoundary from './campusBoundary.json';
+import { campusStyle } from './campusStyle';
 import { maplibregl, maplibreReady } from './maplibre';
 import styles from './map.module.css';
 
@@ -53,7 +54,40 @@ function coneImage(): ImageData {
   return ctx.getImageData(0, 0, size, size);
 }
 
+/**
+ * Límites de desplazamiento: un margen corto (~400 m) a los lados del campus. Hacia arriba y abajo
+ * se deja lo necesario para que en un celular vertical quepa el campus completo a lo ancho
+ * (MapLibre no deja ver nada fuera de estos límites y, si no cupiera, forzaría un acercamiento).
+ */
+function campusMaxBounds(): [[number, number], [number, number]] {
+  const [w, s, e, n] = campusBoundary.properties.bbox;
+  const MARGIN_DEG = 0.004;
+  const widthInLatDeg = ((e - w) * 105_220) / 110_540;
+  // 1.7 × el ancho cubre pantallas de hasta ~20:9 aun descontando el espacio de la barra y los controles.
+  const halfLat = Math.max((n - s) / 2 + MARGIN_DEG, widthInLatDeg * 1.7);
+  const midLat = (n + s) / 2;
+  return [[w - MARGIN_DEG, midLat - halfLat], [e + MARGIN_DEG, midLat + halfLat]];
+}
+
+/**
+ * Polígono del mundo con el campus como hueco: al pintarlo semitransparente, los alrededores se
+ * atenúan y el campus resalta a simple vista.
+ */
+function outsideCampus(): FeatureCollection {
+  const world = [[-180, -85], [180, -85], [180, 85], [-180, 85], [-180, -85]];
+  const hole = [...campusBoundary.geometry.coordinates[0]].reverse();
+  return { type: 'FeatureCollection', features: [{ type: 'Feature', geometry: { type: 'Polygon', coordinates: [world, hole] }, properties: {} }] };
+}
+
 function addLayers(map: MapLibreMap) {
+  map.addSource('outside-campus', { type: 'geojson', data: outsideCampus() });
+  map.addSource('campus-boundary', { type: 'geojson', data: campusBoundary as GeoJSON.Feature });
+  map.addLayer({ id: 'outside-campus', type: 'fill', source: 'outside-campus', paint: { 'fill-color': '#ffffff', 'fill-opacity': 0.72 } });
+  map.addLayer({
+    id: 'campus-boundary', type: 'line', source: 'campus-boundary',
+    layout: { 'line-join': 'round' },
+    paint: { 'line-color': '#3d3d3a', 'line-width': ['interpolate', ['linear'], ['zoom'], 14, 2, 18, 4] },
+  });
   for (const id of ['route', 'route-tail', 'places', 'destination', 'user']) map.addSource(id, { type: 'geojson', data: EMPTY });
   map.addImage('heading-cone', coneImage(), { pixelRatio: 2 });
 
@@ -165,15 +199,16 @@ export function CampusMap() {
     };
 
     function createMap() {
-      const [w, s, e, n] = CAMPUS_BBOX;
+      const [w, s, e, n] = campusBoundary.properties.bbox;
       const map = new maplibregl.Map({
         container: container.current!,
         style: campusStyle(),
-        center: CAMPUS_CENTER,
-        zoom: 16.3,
-        minZoom: 14,
+        // Abre con el campus completo a la vista, debajo de la barra de búsqueda.
+        bounds: [[w, s], [e, n]],
+        fitBoundsOptions: { padding: { top: 130, bottom: 40, left: 12, right: 12 } },
         maxZoom: 20,
-        maxBounds: [[w - 0.01, s - 0.01], [e + 0.01, n + 0.01]],
+        // No se puede alejar ni desplazar mucho más allá del campus.
+        maxBounds: campusMaxBounds(),
         // La rotación la controla el botón de orientación, no los gestos (evita giros accidentales).
         dragRotate: false,
         pitchWithRotate: false,
