@@ -1,4 +1,5 @@
 import type { Lang, MessageKey } from '../../core/i18n/i18n';
+import type { IndoorStep } from '../../core/routing/indoor';
 import type { Step } from '../../core/routing/instructions';
 import type { SearchResult } from '../../core/search';
 
@@ -34,9 +35,31 @@ export function maneuverText(step: Step, dest: SearchResult, t: T, lang: Lang): 
   }
 }
 
-/** Indicación del piso y salón al entrar al edificio (la guía interior paso a paso es la fase 4). */
+/** Indicación del piso y salón cuando el edificio aún no tiene plano interior para guiar paso a paso. */
 export function floorHint(dest: SearchResult, t: T): string | null {
   if (dest.type === 'room') return t('nav.floorHint', { floor: dest.floor, code: dest.code });
   if (dest.type === 'building') return t('nav.floorHint', { floor: dest.code.floor, code: dest.code.code });
   return null;
+}
+
+/** Texto principal y secundario de un paso dentro del edificio. */
+export function indoorStepText(step: IndoorStep, dest: SearchResult, t: T, lang: Lang): { main: string; sub?: string } {
+  const landmark = step.landmark ? ` ${step.landmark[lang]}` : '';
+  const walk = step.distanceM >= 1 ? t('nav.walk', { m: roundDistance(step.distanceM) }) : undefined;
+  switch (step.kind) {
+    case 'enter':
+      return { main: t('indoor.enter') + landmark, sub: walk };
+    case 'walk':
+      return { main: t('indoor.walk') + landmark, sub: walk };
+    case 'turn':
+      return { main: t(`nav.turn.${step.turn!}`) + landmark, sub: walk };
+    case 'stairs':
+      return { main: t(step.toLevel! > step.level ? 'indoor.stairsUp' : 'indoor.stairsDown', { floor: step.toLevel! }) + landmark };
+    case 'elevator':
+      return { main: t('indoor.elevator', { floor: step.toLevel! }) + landmark };
+    case 'arrive': {
+      const code = dest.type === 'room' ? dest.code : dest.type === 'building' ? dest.code.code : dest.place.name[lang];
+      return { main: t('indoor.arrive', { code }), sub: t(`indoor.side.${step.side ?? 'ahead'}`) };
+    }
+  }
 }

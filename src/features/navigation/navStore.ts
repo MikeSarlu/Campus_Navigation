@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { locateMe } from '../../app/sensors';
 import { useApp } from '../../app/store';
 import type { LngLat } from '../../core/data/types';
+import { buildIndoorLeg, type IndoorLeg } from '../../core/routing/indoor';
 import { buildSteps, currentStepIndex, type Step } from '../../core/routing/instructions';
 import { projectOnLine } from '../../core/routing/planar';
 import { findRoute, snapToNetwork, type Route } from '../../core/routing/route';
@@ -19,7 +20,7 @@ export const NEAR_END_M = 25;
 /** Si el punto de partida está más lejos que esto de cualquier camino, se avisa. */
 const OFF_CAMPUS_M = 150;
 
-export type NavPhase = 'idle' | 'choosingStart' | 'active' | 'arrived';
+export type NavPhase = 'idle' | 'choosingStart' | 'active' | 'indoor' | 'arrived';
 
 interface NavState {
   phase: NavPhase;
@@ -32,6 +33,12 @@ interface NavState {
   offRouteReadings: number;
   /** Esperando que el usuario toque su punto de partida en el mapa. */
   pickingOnMap: boolean;
+  /** Tramo dentro del edificio (fase 'indoor'): se avanza con Siguiente/Anterior. */
+  indoor: IndoorLeg | null;
+  indoorIndex: number;
+  /** Piso que muestra el plano (sigue al paso, pero el usuario puede ver otros). */
+  viewLevel: number | null;
+  show3D: boolean;
 
   begin: () => void;
   startFrom: (pos: LngLat, mode: 'gps' | 'manual') => void;
@@ -40,10 +47,18 @@ interface NavState {
   next: () => void;
   prev: () => void;
   arrive: () => void;
+  /** "Estoy en la entrada": pasa a la guía dentro del edificio. */
+  enterIndoor: () => void;
+  indoorGo: (delta: 1 | -1) => void;
+  setViewLevel: (level: number) => void;
+  setShow3D: (show: boolean) => void;
   reset: () => void;
 }
 
-const initial = { phase: 'idle' as NavPhase, mode: 'gps' as const, route: null, steps: [], stepIndex: 0, alongM: 0, offRouteReadings: 0, pickingOnMap: false };
+const initial = {
+  phase: 'idle' as NavPhase, mode: 'gps' as const, route: null, steps: [], stepIndex: 0, alongM: 0, offRouteReadings: 0,
+  pickingOnMap: false, indoor: null, indoorIndex: 0, viewLevel: null, show3D: false,
+};
 
 export const useNav = create<NavState>((set, get) => ({
   ...initial,
@@ -104,7 +119,28 @@ export const useNav = create<NavState>((set, get) => ({
     return { stepIndex, alongM: s.steps[stepIndex].alongM };
   }),
 
-  arrive: () => set({ phase: 'arrived' }),
+  arrive: () => set({ phase: 'arrived', show3D: false }),
+
+  enterIndoor: () => {
+    const { route } = get();
+    const app = useApp.getState();
+    const leg = route && app.campus.status === 'ready' ? buildIndoorLeg(route, app.campus.data) : null;
+    if (!leg) {
+      get().arrive();
+      return;
+    }
+    // La vista 3D se muestra una vez al entrar, como resumen del recorrido (docs/DISENO.md §6.8).
+    set({ phase: 'indoor', indoor: leg, indoorIndex: 0, viewLevel: leg.steps[0].level, show3D: true });
+  },
+  indoorGo: (delta) => set((s) => {
+    if (!s.indoor) return {};
+    const indoorIndex = Math.max(0, Math.min(s.indoor.steps.length - 1, s.indoorIndex + delta));
+    const step = s.indoor.steps[indoorIndex];
+    // En una escalera se muestra el piso de salida, para ubicarla; el siguiente paso ya está en el nuevo piso.
+    return { indoorIndex, viewLevel: step.level };
+  }),
+  setViewLevel: (viewLevel) => set({ viewLevel }),
+  setShow3D: (show3D) => set({ show3D }),
   reset: () => set(initial),
 }));
 

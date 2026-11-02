@@ -4,7 +4,9 @@ import { loadCampus } from '../core/data/loadCampus';
 import { validateCampus } from '../core/data/validate';
 import { CampusMap } from '../features/map/CampusMap';
 import { MapControls } from '../features/map/MapControls';
+import { IndoorView } from '../features/indoor/IndoorView';
 import { NavigationView } from '../features/navigation/NavigationView';
+import { useNav } from '../features/navigation/navStore';
 import { CategoryChips } from '../features/search/CategoryChips';
 import { DetailSheet } from '../features/search/DetailSheet';
 import { SearchBar } from '../features/search/SearchBar';
@@ -21,6 +23,7 @@ export function App() {
   const view = useApp((s) => s.view);
   const campus = useApp((s) => s.campus);
   const previewing = useApp((s) => s.previewingDraft);
+  const indoor = useNav((s) => s.phase === 'indoor');
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -77,6 +80,7 @@ export function App() {
           )}
         </div>
       )}
+      {view === 'navigate' && indoor && <IndoorView />}
       <Toast />
     </main>
   );

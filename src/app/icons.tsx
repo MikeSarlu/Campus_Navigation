@@ -24,6 +24,8 @@ export function TurnIcon({ kind }: { kind: string }) {
     uturn: 'M8 20V9a4 4 0 0 1 8 0v4M12 10l4 4 4-4',
     arrive: 'M12 21s-6-5.6-6-11a6 6 0 0 1 12 0c0 5.4-6 11-6 11zM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',
     enter: 'M4 21V4h11v17M15 12H9M12 9l-3 3 3 3M15 4l5 2v15h-5',
+    stairs: 'M3 20h5v-5h5v-5h5V5h3',
+    elevator: 'M5 3h14v18H5zM9 10l3-3 3 3M9 14l3 3 3-3',
   };
   return (
     <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"

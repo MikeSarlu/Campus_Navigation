@@ -86,7 +86,7 @@ function ActiveNavigation({ controls }: { controls: ReactNode }) {
   const following = useApp((s) => s.following);
   const back = useApp((s) => s.back);
   const { mode, route, steps, stepIndex, alongM } = useNav();
-  const { next, prev, arrive } = useNav.getState();
+  const { next, prev, arrive, enterIndoor } = useNav.getState();
   if (!route || !destination || !steps.length) return null;
 
   const last = steps.length - 1;
@@ -112,7 +112,9 @@ function ActiveNavigation({ controls }: { controls: ReactNode }) {
 
   const remainingM = Math.max(0, route.lengthM - alongM);
   const nearEnd = mode === 'gps' ? route.outdoorLengthM - alongM <= NEAR_END_M : stepIndex === last;
-  const hint = nearEnd ? floorHint(destination, t) : null;
+  // Si la ruta sigue dentro de un edificio con plano, al final se pasa a la guía interior.
+  const hasIndoor = route.indoorFrom < route.nodes.length;
+  const hint = nearEnd && !hasIndoor ? floorHint(destination, t) : null;
   const approx = mode === 'gps' && fix && fix.accuracyM > 30;
 
   return (
@@ -146,7 +148,9 @@ function ActiveNavigation({ controls }: { controls: ReactNode }) {
         </div>
         <div className={styles.actions}>
           <button type="button" className={styles.stop} onClick={back}>{t('nav.stop')}</button>
-          {nearEnd && <button type="button" className={styles.arrive} onClick={arrive}>{t('nav.arrived')}</button>}
+          {nearEnd && (hasIndoor
+            ? <button type="button" className={styles.arrive} onClick={enterIndoor}>{t('indoor.atEntrance')}</button>
+            : <button type="button" className={styles.arrive} onClick={arrive}>{t('nav.arrived')}</button>)}
         </div>
       </section>
     </>
