@@ -341,3 +341,15 @@
     border-top: var(--border-width) solid var(--color-border);
   }
 }
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 var(--space-3);
+  font-weight: 600;
+  color: inherit;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: 8px;
+  text-decoration: none;
+}

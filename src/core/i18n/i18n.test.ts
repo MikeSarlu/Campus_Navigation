@@ -15,6 +15,6 @@ describe('detectLanguage', () => {
 
 describe('translate', () => {
   it('sustituye parámetros', () => {
-    expect(translate('en', 'data.summary', { places: 3, date: 'Nov 1' })).toBe('3 places · data from Nov 1');
+    expect(translate('en', 'search.count', { n: 3 })).toBe('3 results');
   });
 });

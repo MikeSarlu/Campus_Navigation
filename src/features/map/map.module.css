@@ -1,11 +1,7 @@
 .map {
   position: absolute;
   inset: 0;
-  display: grid;
-  place-items: center;
-  background: var(--color-map-placeholder);
-  color: var(--color-text-secondary);
-  font-weight: var(--font-weight-strong);
+  background: #f1f1ec;
 }
 
 .controls {
@@ -31,4 +27,21 @@
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
+}
+
+/* Activo: rumbo encendido o mapa siguiendo la ubicación. */
+.control[aria-pressed='true'] {
+  color: var(--color-on-accent);
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.control[aria-busy='true'] svg {
+  animation: pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  to {
+    opacity: 0.3;
+  }
 }

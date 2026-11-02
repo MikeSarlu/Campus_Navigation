@@ -13,6 +13,14 @@ npm test         # pruebas unitarias
 npm run build    # compilación de producción en dist/
 ```
 
+## Mapa base
+
+Las teselas del campus están en `public/tiles/` y las fuentes de las etiquetas en `public/fonts/` (datos de OpenStreetMap vía Protomaps). Para actualizarlas con los datos más recientes de OSM:
+
+```bash
+npm run fetch-tiles
+```
+
 ## Datos
 
 Todo el contenido del campus vive en `public/data/campus.json` (modelo en `src/core/data/types.ts`). Por ahora contiene los lugares y siglas del mapa oficial, **sin coordenadas**: se levantan con el editor (fase 1).
@@ -31,6 +39,7 @@ Abre `http://localhost:5173/editor` (o `/editor` en el sitio publicado). Los tex
 - Trabajen sobre un solo archivo a la vez y pásenlo de mano en mano para no perder cambios.
 - Los fondos de los pisos no se incluyen en `campus.json`: se quedan en el navegador donde se subieron.
 - Para publicar, reemplaza `public/data/campus.json` con el archivo exportado y despliega.
+- **Ver en la app** (barra superior del editor) abre la app con tu borrador (`/?datos=editor`) para revisarlo antes de exportar. Funciona en el mismo navegador donde editas.
 - **GPS en el celular:** el navegador solo da la ubicación en sitios HTTPS. Con `npm run dev` abierto desde el celular por la red local no funciona; usa la versión publicada en Vercel.
 
 ## Despliegue

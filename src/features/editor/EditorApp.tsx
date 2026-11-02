@@ -80,6 +80,7 @@ export function EditorApp() {
           {errors ? `${errors} errores` : 'Sin errores'}
         </button>
         <span className={styles.spacer} />
+        <a className={styles.link} href="/?datos=editor" target="_blank" rel="noopener">Ver en la app</a>
         <button type="button" onClick={() => fileInput.current?.click()}>Importar</button>
         <input ref={fileInput} type="file" accept="application/json,.json" hidden onChange={(e) => { void onImport(e.target.files?.[0]); e.target.value = ''; }} />
         <button type="button" className={styles.primary} onClick={() => exportCampus(data)}>Exportar campus.json</button>

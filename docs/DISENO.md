@@ -45,7 +45,7 @@ Aplicación web móvil (PWA) que lleva a un estudiante desde donde está hasta u
 ┌──────────────────────── Navegador móvil (PWA) ────────────────────────┐
 │  React UI ── estado (Zustand) ── i18n (diccionarios es/en)           │
 │     │                                                                  │
-│     ├─ MapLibre GL ── estilo propio "sol" ── teselas PMTiles (campus) │
+│     ├─ MapLibre GL ── estilo propio "sol" ── teselas locales (campus) │
 │     ├─ Motor de rutas (A* sobre grafo exterior+interior)              │
 │     ├─ Sensores: Geolocation (watchPosition), DeviceOrientation       │
 │     ├─ Vista 3D (three.js / react-three-fiber, carga diferida)        │
@@ -59,7 +59,7 @@ Aplicación web móvil (PWA) que lleva a un estudiante desde donde está hasta u
 
 ### 4.1 Decisiones técnicas y por qué
 
-- **Teselas propias en PMTiles en lugar de los servidores de OSM.** La política de uso de tile.openstreetmap.org prohíbe descargar teselas en bloque para uso sin conexión. Un recorte vectorial del área del campus (Protomaps, datos OSM) pesa pocos MB, se sirve como archivo estático desde Vercel, se puede precargar sin conexión y permite un estilo de alto contraste propio. Se mantiene la atribución "© OpenStreetMap contributors".
+- **Teselas propias en lugar de los servidores de OSM.** La política de uso de tile.openstreetmap.org prohíbe descargar teselas en bloque para uso sin conexión. `npm run fetch-tiles` extrae del build mundial de Protomaps (datos OSM) solo las teselas vectoriales del campus: 32 archivos `public/tiles/{z}/{x}/{y}.mvt` (≈1.7 MB) más las fuentes de las etiquetas. Se sirven como archivos estáticos desde Vercel (sin servidor de teselas ni librería extra), se pueden precargar sin conexión y permiten un estilo de alto contraste propio. Se usan archivos sueltos en vez de un solo `.pmtiles` porque así no hace falta el protocolo `pmtiles://` en la app ni en el service worker. Se mantiene la atribución "© OpenStreetMap · Protomaps".
 - **MapLibre GL:** rotación del mapa por rumbo, inclinación y renderizado vectorial nítido.
 - **Grafo propio en el cliente:** el campus es pequeño (cientos de nodos), así que A* corre en milisegundos, sin servidor y también sin conexión.
 - **Zustand:** estado global mínimo, sin el boilerplate de Redux.
@@ -86,7 +86,8 @@ src/
   styles/         tokens de diseño
 public/
   data/campus.json
-  tiles/campus.pmtiles
+  tiles/{z}/{x}/{y}.mvt   (generado con npm run fetch-tiles)
+  fonts/                 (glifos de las etiquetas)
 ```
 
 ## 5. Modelo de datos
@@ -281,7 +282,7 @@ Pantalla verde: "Llegaste a CN‑220". Botón "Listo".
 Autoguardado local en IndexedDB, más **Exportar/Importar JSON**. El archivo exportado se coloca en `public/data/campus.json` y se despliega. Los fondos de los pisos son solo una ayuda para calcar: se quedan en el navegador y no van en `campus.json`.
 
 ### 8.5 Mapa base del editor
-El editor usa teselas en línea (OpenStreetMap o satélite de Esri) porque solo se usa con conexión. La app usará las teselas propias en PMTiles (§4.1).
+El editor usa teselas en línea (OpenStreetMap o satélite de Esri) porque solo se usa con conexión. La app usa las teselas locales del campus (§4.1).
 
 ## 9. Rutas e instrucciones
 
@@ -301,7 +302,7 @@ Detección con `navigator.languages`: el primer idioma que empiece con `es` o `e
 |---|---|
 | 0 | Proyecto base (Vite + React + TS), tokens de diseño, i18n, carga de `campus.json` con datos de ejemplo, despliegue inicial en Vercel |
 | 1 | **Editor**: modo exterior y modo interior, validación, export/import |
-| 2 | Mapa (PMTiles + estilo "sol"), controles, búsqueda, abreviaturas, atajos, detalle |
+| 2 | Mapa (teselas locales + estilo "sol"), controles, búsqueda, abreviaturas, atajos, detalle |
 | 3 | Rutas exteriores, navegación, recálculo, punto de partida manual, estados de sensores |
 | 4 | Navegación interior paso a paso, selector de piso, vista 3D, "Llegué" |
 | 5 | PWA sin conexión, reportes simulados, estados de carga y conexión |

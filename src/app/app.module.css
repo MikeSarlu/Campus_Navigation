@@ -7,28 +7,80 @@
 .top {
   position: absolute;
   inset: 0 0 auto;
+  z-index: 2;
   padding: max(var(--space-3), env(safe-area-inset-top)) var(--space-4) 0;
+  pointer-events: none;
 }
 
-.controls {
-  position: absolute;
-  right: var(--space-4);
-  bottom: calc(var(--space-4) + 56px + env(safe-area-inset-bottom));
+.top > * {
+  pointer-events: auto;
 }
 
+.preview {
+  box-sizing: border-box;
+  height: 28px;
+  margin: 0 0 var(--space-2);
+  padding: 0 var(--space-3);
+  line-height: 28px;
+  font-size: var(--font-size-small);
+  font-weight: 700;
+  color: #fff;
+  background: #7a2fd0;
+  border-radius: var(--radius);
+}
+
+/* Controles del mapa y panel de destino, apilados desde abajo. */
 .bottom {
   position: absolute;
   inset: auto 0 0;
-  padding: 0 var(--space-4) max(var(--space-3), env(safe-area-inset-bottom));
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+}
+
+.bottom > * {
+  pointer-events: auto;
+}
+
+.controls {
+  align-self: flex-end;
+  padding: 0 var(--space-4) var(--space-4);
+}
+
+.bottom > .controls:last-child {
+  padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
 }
 
 .status {
-  display: inline-block;
-  margin: 0;
+  align-self: flex-start;
+  margin: 0 var(--space-4) max(var(--space-3), env(safe-area-inset-bottom));
   padding: var(--space-2) var(--space-3);
   font-size: var(--font-size-small);
   font-weight: 500;
   background: var(--color-surface);
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-pill);
+}
+
+.toastRegion {
+  position: absolute;
+  inset: auto var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom));
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.toast {
+  max-width: 480px;
+  padding: var(--space-3) var(--space-4);
+  font-weight: 600;
+  text-align: left;
+  color: #fff;
+  background: #0b0b0b;
+  border: 0;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  pointer-events: auto;
 }

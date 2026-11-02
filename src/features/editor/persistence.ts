@@ -1,11 +1,10 @@
 // Autoguardado del editor en IndexedDB (los fondos pueden pesar varios MB, demasiado para localStorage).
-import { createStore, del, entries, get, set } from 'idb-keyval';
+import { del, entries, get, set } from 'idb-keyval';
+import { DRAFT_KEY as DATA_KEY, editorDb as store } from '../../core/data/editorDraft';
 import { loadCampus } from '../../core/data/loadCampus';
 import type { CampusData } from '../../core/data/types';
 import { useEditor, type Background } from './editorStore';
 
-const store = createStore('campus-editor', 'kv');
-const DATA_KEY = 'data';
 const BG_PREFIX = 'bg:';
 
 type StoredBackground = Omit<Background, 'url'> & { blob: Blob };

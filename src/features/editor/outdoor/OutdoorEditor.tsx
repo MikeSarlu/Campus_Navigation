@@ -1,21 +1,15 @@
-import * as maplibregl from 'maplibre-gl';
 import type { GeoJSONSource, MapMouseEvent, StyleSpecification } from 'maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
-import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url';
 import { useEffect, useRef } from 'react';
 import type { LineString, Point } from 'geojson';
 import type { LngLat, LocalXY } from '../../../core/data/types';
 import { distanceXY, pointToSegment } from '../../../core/geo';
+import { CAMPUS_CENTER } from '../../map/campusStyle';
+import { maplibregl } from '../../map/maplibre';
 import styles from '../editor.module.css';
 import { useEditor } from '../editorStore';
 import { moveNode } from '../ops';
 import { addEntrance, addPathPoint, deleteHit, setAnchorWorld, setPlaceLocation, type MapHit } from './outdoorActions';
 import { edgesGeoJSON, nodesGeoJSON, outlinesGeoJSON } from './outdoorLayers';
-
-// MapLibre busca su worker junto a su propio archivo, que Vite reubica al empaquetar.
-maplibregl.setWorkerUrl(workerUrl);
-
-const UDLAP_CENTER: LngLat = [-98.2833, 19.0546];
 
 export type Basemap = 'osm' | 'satellite';
 
@@ -126,7 +120,7 @@ export function OutdoorEditor({ basemap, gpsPos }: { basemap: Basemap; gpsPos?: 
 
   // Crear el mapa una sola vez.
   useEffect(() => {
-    const map = new maplibregl.Map({ container: container.current!, style: STYLE, center: UDLAP_CENTER, zoom: 16.5, maxZoom: 21 });
+    const map = new maplibregl.Map({ container: container.current!, style: STYLE, center: CAMPUS_CENTER, zoom: 16.5, maxZoom: 21 });
     mapRef.current = map;
     map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), 'top-right');
     map.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-left');

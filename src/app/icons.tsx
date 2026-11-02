@@ -13,6 +13,9 @@ function Icon({ children }: { children: ReactNode }) {
 export const SearchIcon = () => (
   <Icon><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></Icon>
 );
+export const BackIcon = () => (
+  <Icon><path d="M15 5 8 12l7 7M8 12h12" /></Icon>
+);
 export const ClearIcon = () => (
   <Icon><path d="M18 6 6 18M6 6l12 12" /></Icon>
 );
