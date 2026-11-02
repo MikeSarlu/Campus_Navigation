@@ -14,8 +14,10 @@
     "fetch-tiles": "node scripts/fetch-tiles.mjs"
   },
   "dependencies": {
+    "@mapbox/vector-tile": "^3.0.0",
     "idb-keyval": "^6.3.0",
     "maplibre-gl": "^6.16.0",
+    "pbf": "^5.1.2",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "zustand": "^5.0.16"

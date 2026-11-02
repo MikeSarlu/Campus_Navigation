@@ -1,0 +1,247 @@
+/* Capa de navegación sobre el mapa: tarjeta arriba, controles y resumen abajo. */
+.layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+}
+
+.layer > *,
+.controls > * {
+  pointer-events: auto;
+}
+
+.spacer {
+  flex: 1;
+  pointer-events: none !important;
+}
+
+.controls {
+  align-self: flex-end;
+  padding: 0 var(--space-4) var(--space-4);
+  pointer-events: none !important;
+}
+
+/* Tarjetas de navegación: grandes y de alto contraste para leer de un vistazo caminando al sol. */
+.topCard,
+.bottomCard {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  box-shadow: var(--shadow);
+}
+
+.topCard {
+  min-width: 0;
+  margin: max(var(--space-3), env(safe-area-inset-top)) var(--space-3) 0;
+  border-radius: var(--radius);
+}
+
+.bottomCard {
+  position: relative;
+  padding-bottom: max(var(--space-4), env(safe-area-inset-bottom));
+  border-width: var(--border-width) 0 0;
+  border-radius: 20px 20px 0 0;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 22px;
+}
+
+.startOptions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-2);
+}
+
+.select {
+  width: 100%;
+  min-width: 0;
+}
+
+.instruction {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.instruction svg {
+  flex: none;
+  color: var(--color-route);
+}
+
+.instructionMain,
+.instructionSub,
+.floorHint,
+.approx,
+.hint {
+  margin: 0;
+}
+
+.instructionMain {
+  font-size: var(--font-size-instruction);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.instructionSub {
+  margin-top: 2px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.floorHint {
+  padding: var(--space-2) var(--space-3);
+  font-weight: 700;
+  background: #e8efff;
+  border: var(--border-width) solid var(--color-accent);
+  border-radius: var(--radius);
+}
+
+.approx {
+  font-size: var(--font-size-small);
+  font-weight: 600;
+  color: #6b4700;
+}
+
+.hint {
+  font-weight: 600;
+}
+
+.stepper span {
+  white-space: nowrap;
+}
+
+.stepper {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--space-2);
+  align-items: center;
+  font-weight: 600;
+  text-align: center;
+}
+
+.summary p {
+  margin: 0;
+}
+
+.summaryTitle {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.primary,
+.secondary,
+.stop,
+.arrive,
+.done,
+.select,
+.recenter {
+  min-height: 52px;
+  padding: 0 var(--space-4);
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: var(--radius);
+}
+
+.primary {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: center;
+  color: var(--color-on-accent);
+  background: var(--color-accent);
+  border: 0;
+}
+
+.secondary,
+.select {
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+}
+
+.secondary[aria-pressed='true'] {
+  color: var(--color-on-accent);
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.secondary:disabled {
+  opacity: 0.35;
+}
+
+.stop {
+  flex: 1;
+  color: #fff;
+  background: var(--color-destination);
+  border: 0;
+}
+
+.arrive {
+  flex: 1;
+  color: #fff;
+  background: var(--color-arrival);
+  border: 0;
+}
+
+.recenter {
+  position: absolute;
+  top: calc(-52px - var(--space-3));
+  left: var(--space-4);
+  display: flex;
+  gap: var(--space-1);
+  align-items: center;
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  box-shadow: var(--shadow);
+}
+
+.link {
+  justify-self: start;
+  min-height: 44px;
+  padding: 0;
+  font-weight: 700;
+  text-decoration: underline;
+  background: none;
+  border: 0;
+}
+
+/* Llegada: verde, como en el reporte (§4.5). */
+.arrived {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-4) max(var(--space-4), env(safe-area-inset-bottom));
+  color: #fff;
+  background: var(--color-arrival);
+  border-radius: 20px 20px 0 0;
+}
+
+.arrived p {
+  margin: 0;
+}
+
+.arrivedTitle {
+  font-size: 30px;
+  font-weight: 800;
+}
+
+.arrivedName {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.done {
+  color: var(--color-arrival);
+  background: #fff;
+  border: 0;
+}

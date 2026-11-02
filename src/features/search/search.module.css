@@ -230,3 +230,13 @@
   border: var(--border-width) solid #8a6100;
   border-radius: var(--radius);
 }
+
+.walk {
+  min-height: 56px;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--color-on-accent);
+  background: var(--color-accent);
+  border: 0;
+  border-radius: var(--radius);
+}

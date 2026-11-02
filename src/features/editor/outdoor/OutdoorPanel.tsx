@@ -4,6 +4,7 @@ import { useEditor, type OutdoorTool } from '../editorStore';
 import { AnchorSection } from '../indoor/IndoorPanel';
 import type { GpsState } from '../useGpsAverager';
 import type { Basemap } from './OutdoorEditor';
+import { importOsmPaths } from './osmImport';
 import { addEntrance, addPathPoint, setAnchorWorld, setPlaceLocation } from './outdoorActions';
 
 const TOOLS: { id: OutdoorTool; label: string; hint: string }[] = [
@@ -56,7 +57,36 @@ export function OutdoorPanel({ basemap, onBasemap, gps }: Props) {
       {tool === 'anchor' && <AnchorSection />}
       <GpsSection gps={gps} />
       <PlacesList />
+      <OsmImportSection />
     </>
+  );
+}
+
+function OsmImportSection() {
+  const commit = useEditor((s) => s.commit);
+  const hasPaths = useEditor((s) => s.data?.graph.nodes.some((n) => n.kind === 'path') ?? false);
+  const [status, setStatus] = useState<string | null>(null);
+
+  const run = async () => {
+    if (hasPaths && !confirm('Ya hay caminos dibujados. Importar agrega los de OpenStreetMap encima y puede duplicarlos. ¿Continuar?')) return;
+    setStatus('Importando…');
+    try {
+      const { nodes, edges } = await importOsmPaths(commit);
+      setStatus(`Se agregaron ${nodes} puntos y ${edges} tramos. Revísalos: puedes deshacer con Ctrl+Z.`);
+    } catch (e) {
+      setStatus(`No se pudo importar: ${(e as Error).message}`);
+    }
+  };
+
+  return (
+    <section className={styles.section}>
+      <h2>Caminos de OpenStreetMap</h2>
+      <p className={styles.hint}>
+        Agrega como punto de partida los caminos y calles que OpenStreetMap ya tiene dentro del campus. Después corrige lo que falte o sobre.
+      </p>
+      <button type="button" className={styles.button} onClick={() => void run()}>Importar caminos del campus</button>
+      {status && <p aria-live="polite">{status}</p>}
+    </section>
   );
 }
 

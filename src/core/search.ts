@@ -4,7 +4,7 @@ import type { CampusData, CategoryId, LngLat, Place } from './data/types';
 import { haversineM } from './geo';
 
 export type SearchResult =
-  | { type: 'room'; code: string; floor: number; building?: Place; location?: LngLat }
+  | { type: 'room'; code: string; floor: number; building?: Place; location?: LngLat; doorNodeId?: string }
   | { type: 'place'; place: Place }
   /** El código es válido pero ese salón aún no se levantó: se ofrece ir a su edificio. */
   | { type: 'building'; code: RoomCode; place: Place };
@@ -58,7 +58,7 @@ export function search(query: string, data: CampusData): SearchOutcome {
         const door = data.graph.nodes.find((n) => n.id === room.doorNodeId);
         const building = buildingPlace(data, b.id);
         scored.push({
-          r: { type: 'room', code: room.code, floor: f.level, building, location: (door && nodeWorld(data, door)) ?? building?.location },
+          r: { type: 'room', code: room.code, floor: f.level, building, location: (door && nodeWorld(data, door)) ?? building?.location, doorNodeId: room.doorNodeId },
           score,
           label: room.code,
         });

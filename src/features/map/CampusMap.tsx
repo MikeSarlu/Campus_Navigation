@@ -3,7 +3,9 @@ import type { GeoJSONSource, Map as MapLibreMap } from 'maplibre-gl';
 import { useEffect, useRef } from 'react';
 import { useApp, useT } from '../../app/store';
 import type { CampusData, LngLat, PlaceKind } from '../../core/data/types';
+import { pointAlong, sliceLineFrom } from '../../core/routing/planar';
 import { resultLocation } from '../../core/search';
+import { useNav } from '../navigation/navStore';
 import { resultTitle } from '../search/resultText';
 import { CAMPUS_BBOX, CAMPUS_CENTER, campusStyle } from './campusStyle';
 import { maplibregl } from './maplibre';
@@ -52,8 +54,26 @@ function coneImage(): ImageData {
 }
 
 function addLayers(map: MapLibreMap) {
-  for (const id of ['places', 'destination', 'user']) map.addSource(id, { type: 'geojson', data: EMPTY });
+  for (const id of ['route', 'route-tail', 'places', 'destination', 'user']) map.addSource(id, { type: 'geojson', data: EMPTY });
   map.addImage('heading-cone', coneImage(), { pixelRatio: 2 });
+
+  // Ruta azul con borde blanco, como en otras apps de mapas (docs/DISENO.md §7).
+  map.addLayer({
+    id: 'route-casing', type: 'line', source: 'route',
+    layout: { 'line-cap': 'round', 'line-join': 'round' },
+    paint: { 'line-color': '#ffffff', 'line-width': ['interpolate', ['linear'], ['zoom'], 15, 9, 19, 16] },
+  });
+  // Último tramo, en línea recta, del final del camino hasta el pin (cuando no coinciden).
+  map.addLayer({
+    id: 'route-tail', type: 'line', source: 'route-tail',
+    layout: { 'line-cap': 'round' },
+    paint: { 'line-color': '#0040c1', 'line-width': 4, 'line-dasharray': [1, 1.5] },
+  });
+  map.addLayer({
+    id: 'route', type: 'line', source: 'route',
+    layout: { 'line-cap': 'round', 'line-join': 'round' },
+    paint: { 'line-color': '#0040c1', 'line-width': ['interpolate', ['linear'], ['zoom'], 15, 5, 19, 10] },
+  });
 
   map.addLayer({
     id: 'places-dot', type: 'circle', source: 'places',
@@ -159,6 +179,7 @@ export function CampusMap() {
     });
 
     const openPlace = (e: maplibregl.MapLayerMouseEvent) => {
+      if (useNav.getState().pickingOnMap || useApp.getState().view === 'navigate') return;
       const id = e.features?.[0]?.properties.id as string | undefined;
       const s = useApp.getState();
       const place = s.campus.status === 'ready' ? s.campus.data.places.find((p) => p.id === id) : undefined;
@@ -170,6 +191,11 @@ export function CampusMap() {
       map.on('mouseenter', layer, () => (map.getCanvas().style.cursor = 'pointer'));
       map.on('mouseleave', layer, () => (map.getCanvas().style.cursor = ''));
     }
+    // Elegir el punto de partida tocando el mapa (cuando no hay GPS).
+    map.on('click', (e) => {
+      const nav = useNav.getState();
+      if (nav.phase === 'choosingStart' && nav.pickingOnMap) nav.startFrom([e.lngLat.lng, e.lngLat.lat], 'manual');
+    });
     // Si el usuario mueve el mapa, deja de seguir su ubicación hasta que toque "Mi ubicación".
     map.on('dragstart', () => useApp.getState().setFollowing(false));
 
@@ -201,7 +227,9 @@ export function CampusMap() {
       // El pin del destino reemplaza al marcador normal de ese lugar.
       const destId = destination?.type === 'place' || destination?.type === 'building' ? destination.place.id : '';
       for (const layer of ['places-dot', 'places-label']) map.setFilter(layer, ['!=', ['get', 'id'], destId]);
-      if (loc) map.easeTo({ center: loc, zoom: Math.max(map.getZoom(), 17.5), padding: { bottom: 260, top: 80, left: 0, right: 0 } });
+      // Desplazado hacia arriba para que el panel inferior no tape el pin. Se usa `offset` y no
+      // `padding` porque el padding queda guardado en el mapa y descuadra los encuadres siguientes.
+      if (loc) map.easeTo({ center: loc, zoom: Math.max(map.getZoom(), 17.5), offset: [0, -90] });
     });
   }, [destination, lang]);
 
@@ -218,6 +246,42 @@ export function CampusMap() {
   useEffect(() => {
     whenReady((map) => map.easeTo({ bearing: orientation === 'heading' && heading !== null ? heading : 0, duration: 250 }));
   }, [orientation, heading]);
+
+  // Ruta: completa al empezar; con GPS solo lo que falta por caminar.
+  const route = useNav((s) => s.route);
+  const navMode = useNav((s) => s.mode);
+  const alongM = useNav((s) => s.alongM);
+  const stepIndex = useNav((s) => s.stepIndex);
+  const steps = useNav((s) => s.steps);
+
+  useEffect(() => {
+    whenReady((map) => {
+      const coords = route?.outdoorCoords ?? [];
+      const line = navMode === 'gps' ? sliceLineFrom(coords, alongM) : coords;
+      const lineFC = (coords: LngLat[]): FeatureCollection =>
+        coords.length >= 2 ? { type: 'FeatureCollection', features: [{ type: 'Feature', geometry: { type: 'LineString', coordinates: coords }, properties: {} }] } : EMPTY;
+      (map.getSource('route') as GeoJSONSource).setData(lineFC(line));
+      const end = coords.at(-1);
+      const pin = destination && (resultLocation(destination) ?? (destination.type === 'building' ? destination.place.location : undefined));
+      (map.getSource('route-tail') as GeoJSONSource).setData(end && pin && route?.indoorFrom === route?.nodes.length ? lineFC([end, pin]) : EMPTY);
+    });
+  }, [route, navMode, alongM, destination]);
+
+  // Al calcular una ruta nueva, mostrarla completa.
+  useEffect(() => {
+    if (!route || route.outdoorCoords.length < 2) return;
+    whenReady((map) => {
+      const bounds = new maplibregl.LngLatBounds(route.outdoorCoords[0], route.outdoorCoords[0]);
+      for (const c of route.outdoorCoords) bounds.extend(c);
+      map.fitBounds(bounds, { padding: { top: 200, bottom: 240, left: 40, right: 90 }, maxZoom: 18.5, bearing: map.getBearing() });
+    });
+  }, [route]);
+
+  // Sin GPS, el mapa acompaña el paso que se está leyendo.
+  useEffect(() => {
+    if (!route || navMode !== 'manual' || !steps[stepIndex] || stepIndex === 0) return;
+    whenReady((map) => map.easeTo({ center: pointAlong(route.outdoorCoords, steps[stepIndex].alongM), zoom: Math.max(map.getZoom(), 18) }));
+  }, [route, navMode, stepIndex, steps]);
 
   return <div ref={container} className={styles.map} role="region" aria-label={t('map.label')} />;
 }

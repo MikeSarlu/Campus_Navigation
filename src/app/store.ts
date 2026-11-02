@@ -5,7 +5,7 @@ import type { SearchResult } from '../core/search';
 import type { LocationFix, LocationStatus } from '../core/sensors/location';
 
 export type Orientation = 'north' | 'heading';
-export type View = 'home' | 'search' | 'detail';
+export type View = 'home' | 'search' | 'detail' | 'navigate';
 
 const LANG_KEY = 'campus.lang';
 
@@ -40,6 +40,8 @@ interface AppState {
   previewingDraft: boolean;
 
   view: View;
+  /** Entradas que la app agregó al historial (para volver al inicio de un salto). */
+  pushed: number;
   query: string;
   category: CategoryId | null;
   destination: SearchResult | null;
@@ -56,6 +58,9 @@ interface AppState {
   setQuery: (query: string) => void;
   openSearch: (category?: CategoryId) => void;
   openDetail: (result: SearchResult) => void;
+  openNavigate: () => void;
+  /** Cierra todo y vuelve al mapa inicial (p. ej. después de llegar). */
+  goHome: () => void;
   /** Vuelve a la vista anterior usando el historial, igual que el botón Atrás del teléfono. */
   back: () => void;
   syncView: (view: View) => void;
@@ -66,7 +71,7 @@ interface AppState {
   hideToast: () => void;
 }
 
-const DEPTH: Record<View, number> = { home: 0, search: 1, detail: 2 };
+const DEPTH: Record<View, number> = { home: 0, search: 1, detail: 2, navigate: 3 };
 
 /** Cada vista abierta es una entrada del historial, para que el botón Atrás la cierre. */
 function pushView(view: View) {
@@ -79,6 +84,7 @@ export const useApp = create<AppState>((set, get) => ({
   campus: { status: 'loading' },
   previewingDraft: false,
   view: 'home',
+  pushed: 0,
   query: '',
   category: null,
   destination: null,
@@ -102,12 +108,23 @@ export const useApp = create<AppState>((set, get) => ({
       history.back();
       return;
     }
-    if (get().view !== 'search') pushView('search');
+    if (get().view !== 'search') {
+      pushView('search');
+      set({ pushed: get().pushed + 1 });
+    }
     set({ view: 'search', category: category ?? null, query: category ? '' : get().query });
   },
   openDetail: (destination) => {
     pushView('detail');
-    set({ view: 'detail', destination });
+    set({ view: 'detail', destination, pushed: get().pushed + 1 });
+  },
+  openNavigate: () => {
+    if (get().view === 'navigate') return;
+    pushView('navigate');
+    set({ view: 'navigate', pushed: get().pushed + 1 });
+  },
+  goHome: () => {
+    if (get().pushed > 0) history.go(-get().pushed);
   },
   back: () => {
     if (get().view === 'home') return;
@@ -116,8 +133,12 @@ export const useApp = create<AppState>((set, get) => ({
   syncView: (view) => {
     const current = get().view;
     if (DEPTH[view] >= DEPTH[current]) return;
-    // Al salir de la búsqueda se limpia; al salir del detalle se vuelve a los resultados.
-    set(view === 'home' ? { view, query: '', category: null, destination: null } : { view, destination: null });
+    const pushed = view === 'home' ? 0 : Math.max(0, get().pushed - 1);
+    // Al volver al inicio se limpia todo; a los resultados, se suelta el destino; al detalle
+    // (desde la navegación), el destino se conserva para poder volver a caminar con un toque.
+    if (view === 'home') set({ view, pushed, query: '', category: null, destination: null });
+    else if (view === 'search') set({ view, pushed, destination: null });
+    else set({ view, pushed });
   },
 
   setLocation: (location) => set({ location }),

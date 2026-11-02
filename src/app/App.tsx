@@ -4,6 +4,7 @@ import { loadCampus } from '../core/data/loadCampus';
 import { validateCampus } from '../core/data/validate';
 import { CampusMap } from '../features/map/CampusMap';
 import { MapControls } from '../features/map/MapControls';
+import { NavigationView } from '../features/navigation/NavigationView';
 import { CategoryChips } from '../features/search/CategoryChips';
 import { DetailSheet } from '../features/search/DetailSheet';
 import { SearchBar } from '../features/search/SearchBar';
@@ -53,12 +54,17 @@ export function App() {
     <main className={styles.screen} style={{ '--top-extra': previewing ? '36px' : '0px' } as CSSProperties}>
       <CampusMap />
       {view === 'search' && data && <SearchPanel data={data} />}
-      <header className={styles.top}>
-        {previewing && <p className={styles.preview}>{t('preview.banner')}</p>}
-        <SearchBar />
-        {view === 'home' && <CategoryChips />}
-      </header>
-      {view !== 'search' && (
+      {view === 'navigate' ? (
+        // Durante la navegación la búsqueda se oculta: solo la instrucción, el resumen y Detener.
+        <NavigationView controls={<MapControls />} />
+      ) : (
+        <header className={styles.top}>
+          {previewing && <p className={styles.preview}>{t('preview.banner')}</p>}
+          <SearchBar />
+          {view === 'home' && <CategoryChips />}
+        </header>
+      )}
+      {(view === 'home' || view === 'detail') && (
         <div className={styles.bottom}>
           <div className={styles.controls}>
             <MapControls />

@@ -18,3 +18,10 @@ createRoot(document.getElementById('root')!).render(
     )}
   </StrictMode>,
 );
+
+// Solo en desarrollo: acceso a los stores desde la consola para simular GPS y depurar.
+if (import.meta.env.DEV) {
+  void Promise.all([import('./app/store'), import('./features/navigation/navStore')]).then(([app, nav]) => {
+    Object.assign(window, { __campus: { useApp: app.useApp, useNav: nav.useNav } });
+  });
+}
