@@ -1,0 +1,928 @@
+{
+  "version": "0.1.0",
+  "generatedAt": "2026-11-01T18:00:00Z",
+  "places": [
+    {
+      "id": "admisiones",
+      "siglas": "AD",
+      "name": {
+        "es": "Admisiones",
+        "en": "Admissions"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "servicios-escolares",
+      "siglas": "SE",
+      "name": {
+        "es": "Servicios Escolares",
+        "en": "Student Records Office"
+      },
+      "kind": "building",
+      "categories": [
+        "escolares"
+      ],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "posgrados",
+      "siglas": "PG",
+      "name": {
+        "es": "Posgrados",
+        "en": "Graduate Studies"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "egresados",
+      "siglas": "EG",
+      "name": {
+        "es": "Egresados",
+        "en": "Alumni"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "agora-32",
+      "siglas": "AG",
+      "name": {
+        "es": "Ágora-32",
+        "en": "Ágora-32"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "artes-escenicas",
+      "siglas": "AG",
+      "name": {
+        "es": "Artes Escénicas",
+        "en": "Performing Arts"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "asuntos-internacionales",
+      "siglas": "HU",
+      "name": {
+        "es": "Asuntos Internacionales",
+        "en": "International Affairs Office"
+      },
+      "kind": "building",
+      "categories": [
+        "internacional"
+      ],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "auditorio-guillermo-y-sofia-jenkins",
+      "siglas": "AU",
+      "name": {
+        "es": "Auditorio Guillermo y Sofía Jenkins",
+        "en": "Guillermo and Sofía Jenkins Auditorium"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "biblioteca",
+      "siglas": "BI",
+      "name": {
+        "es": "Biblioteca",
+        "en": "Library"
+      },
+      "kind": "building",
+      "categories": [
+        "biblioteca"
+      ],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "centro-estudiantil",
+      "siglas": "CE",
+      "name": {
+        "es": "Centro Estudiantil",
+        "en": "Student Center"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "ciencias-a-4",
+      "siglas": "CN",
+      "name": {
+        "es": "Ciencias A-4",
+        "en": "Sciences A-4"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": [],
+      "buildingId": "bld-cn"
+    },
+    {
+      "id": "ciencias-b-9-laboratorios",
+      "siglas": "CI",
+      "name": {
+        "es": "Ciencias B-9 / Laboratorios",
+        "en": "Sciences B-9 / Laboratories"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "ciencias-de-la-salud-36",
+      "siglas": "SL",
+      "name": {
+        "es": "Ciencias de la Salud-36",
+        "en": "Health Sciences-36"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "ciencias-sociales-7",
+      "siglas": "CS",
+      "name": {
+        "es": "Ciencias Sociales-7",
+        "en": "Social Sciences-7"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "comunicacion",
+      "siglas": "PU",
+      "name": {
+        "es": "Comunicación",
+        "en": "Communication"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "credito-y-cobranza",
+      "siglas": "1",
+      "name": {
+        "es": "Crédito y Cobranza",
+        "en": "Credit and Collections"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "educacion-a-distancia",
+      "siglas": "CB",
+      "name": {
+        "es": "Educación a Distancia",
+        "en": "Distance Education"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "humanidades-31",
+      "siglas": "HU",
+      "name": {
+        "es": "Humanidades-31",
+        "en": "Humanities-31"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "ingenierias-2",
+      "siglas": "IA",
+      "name": {
+        "es": "Ingenierías-2",
+        "en": "Engineering-2"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": [],
+      "buildingId": "bld-ia"
+    },
+    {
+      "id": "incorporacion-estudiantil",
+      "siglas": "1",
+      "name": {
+        "es": "Incorporación Estudiantil",
+        "en": "Student Incorporation"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "ios-development-lab",
+      "siglas": "iOS",
+      "name": {
+        "es": "iOS Development Lab",
+        "en": "iOS Development Lab"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "laboratorio-b-34",
+      "siglas": "LB",
+      "name": {
+        "es": "Laboratorio B-34",
+        "en": "Laboratory B-34"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "laboratorio-a-3",
+      "siglas": "LA",
+      "name": {
+        "es": "Laboratorio A-3",
+        "en": "Laboratory A-3"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "negocios-8",
+      "siglas": "NE",
+      "name": {
+        "es": "Negocios-8",
+        "en": "Business-8"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "planta-fisica",
+      "siglas": "PF",
+      "name": {
+        "es": "Planta Física",
+        "en": "Facilities"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "rectoria",
+      "siglas": "HA",
+      "name": {
+        "es": "Rectoría",
+        "en": "President’s Office"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "recursos-humanos",
+      "siglas": "RH",
+      "name": {
+        "es": "Recursos Humanos",
+        "en": "Human Resources"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "tecnologias-de-informacion",
+      "siglas": "TI",
+      "name": {
+        "es": "Tecnologías de Información",
+        "en": "Information Technology"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "udlap-consultores",
+      "siglas": "HU",
+      "name": {
+        "es": "UDLAP Consultores",
+        "en": "UDLAP Consultores"
+      },
+      "kind": "building",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "alberca",
+      "siglas": "A",
+      "name": {
+        "es": "Alberca",
+        "en": "Swimming Pool"
+      },
+      "kind": "sports",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "campo-de-lanzamiento",
+      "siglas": "CL",
+      "name": {
+        "es": "Campo de lanzamiento",
+        "en": "Throwing Field"
+      },
+      "kind": "sports",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "cancha-de-futbol-rapido",
+      "siglas": "CFR",
+      "name": {
+        "es": "Cancha de futbol rápido",
+        "en": "Futsal Court"
+      },
+      "kind": "sports",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "canchas-de-basquetbol",
+      "siglas": "BQ",
+      "name": {
+        "es": "Canchas de basquetbol",
+        "en": "Basketball Courts"
+      },
+      "kind": "sports",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "canchas-de-tenis",
+      "siglas": "CT",
+      "name": {
+        "es": "Canchas de tenis",
+        "en": "Tennis Courts"
+      },
+      "kind": "sports",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "gimnasio-morris-moe-williams",
+      "siglas": "GA",
+      "name": {
+        "es": "Gimnasio Morris «Moe» Williams",
+        "en": "Morris “Moe” Williams Gym"
+      },
+      "kind": "sports",
+      "categories": [
+        "gimnasio"
+      ],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "gimnasio-de-pesas",
+      "siglas": "GB",
+      "name": {
+        "es": "Gimnasio de pesas",
+        "en": "Weight Room"
+      },
+      "kind": "sports",
+      "categories": [
+        "gimnasio"
+      ],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "gimnasio-luis-luison-gomez-lopez",
+      "siglas": "GC",
+      "name": {
+        "es": "Gimnasio Luis «Luison» Gómez López",
+        "en": "Luis “Luison” Gómez López Gym"
+      },
+      "kind": "sports",
+      "categories": [
+        "gimnasio"
+      ],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "pista-de-atletismo",
+      "siglas": "ATL",
+      "name": {
+        "es": "Pista de atletismo",
+        "en": "Running Track"
+      },
+      "kind": "sports",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "templo-del-dolor",
+      "siglas": "TD",
+      "name": {
+        "es": "Templo del Dolor",
+        "en": "Templo del Dolor"
+      },
+      "kind": "sports",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "colegio-cain-murray",
+      "siglas": "CC",
+      "name": {
+        "es": "Colegio Cain-Murray",
+        "en": "Cain-Murray College"
+      },
+      "kind": "residence",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "colegio-ray-lindley",
+      "siglas": "CL",
+      "name": {
+        "es": "Colegio Ray Lindley",
+        "en": "Ray Lindley College"
+      },
+      "kind": "residence",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "colegio-ignacio-bernal",
+      "siglas": "CB",
+      "name": {
+        "es": "Colegio Ignacio Bernal",
+        "en": "Ignacio Bernal College"
+      },
+      "kind": "residence",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "colegio-jose-gaos",
+      "siglas": "CG",
+      "name": {
+        "es": "Colegio José Gaos",
+        "en": "José Gaos College"
+      },
+      "kind": "residence",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "plaza-de-las-banderas",
+      "siglas": "J1",
+      "name": {
+        "es": "Plaza de las Banderas",
+        "en": "Flag Plaza"
+      },
+      "kind": "garden",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "jardin-de-la-fogata",
+      "siglas": "J2",
+      "name": {
+        "es": "Jardín de la Fogata",
+        "en": "Bonfire Garden"
+      },
+      "kind": "garden",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "jardin-de-la-meditacion",
+      "siglas": "J3",
+      "name": {
+        "es": "Jardín de la Meditación",
+        "en": "Meditation Garden"
+      },
+      "kind": "garden",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "jardin-de-la-pareja",
+      "siglas": "J4",
+      "name": {
+        "es": "Jardín de la Pareja",
+        "en": "Couple’s Garden"
+      },
+      "kind": "garden",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "lago",
+      "siglas": "J5",
+      "name": {
+        "es": "Lago",
+        "en": "Lake"
+      },
+      "kind": "garden",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "jardin-central",
+      "siglas": "J6",
+      "name": {
+        "es": "Jardín Central",
+        "en": "Central Garden"
+      },
+      "kind": "garden",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "centro-integral-de-rehabilitacion",
+      "siglas": "CIR",
+      "name": {
+        "es": "Centro Integral de Rehabilitación",
+        "en": "Comprehensive Rehabilitation Center"
+      },
+      "kind": "service",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "analisis-clinicos",
+      "siglas": "AC",
+      "name": {
+        "es": "Análisis clínicos",
+        "en": "Clinical Laboratory"
+      },
+      "kind": "service",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "tienda-universitaria",
+      "siglas": "CC",
+      "name": {
+        "es": "Tienda Universitaria",
+        "en": "University Store"
+      },
+      "kind": "service",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "servicios-medicos",
+      "name": {
+        "es": "Servicios Médicos",
+        "en": "Medical Services"
+      },
+      "kind": "service",
+      "categories": [
+        "medico"
+      ],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "comedor-universitario",
+      "name": {
+        "es": "Comedor Universitario",
+        "en": "University Dining Hall"
+      },
+      "kind": "service",
+      "categories": [
+        "comedor"
+      ],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "hostal-san-andres",
+      "name": {
+        "es": "Hostal San Andrés",
+        "en": "Hostal San Andrés"
+      },
+      "kind": "service",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "campo-deportivo-1",
+      "siglas": "C1",
+      "name": {
+        "es": "Campo deportivo 1",
+        "en": "Sports Field 1"
+      },
+      "kind": "sports",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "campo-deportivo-2",
+      "siglas": "C2",
+      "name": {
+        "es": "Campo deportivo 2",
+        "en": "Sports Field 2"
+      },
+      "kind": "sports",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "campo-deportivo-3",
+      "siglas": "C3",
+      "name": {
+        "es": "Campo deportivo 3",
+        "en": "Sports Field 3"
+      },
+      "kind": "sports",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "campo-deportivo-4",
+      "siglas": "C4",
+      "name": {
+        "es": "Campo deportivo 4",
+        "en": "Sports Field 4"
+      },
+      "kind": "sports",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "campo-deportivo-5",
+      "siglas": "C5",
+      "name": {
+        "es": "Campo deportivo 5",
+        "en": "Sports Field 5"
+      },
+      "kind": "sports",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "campo-deportivo-6",
+      "siglas": "C6",
+      "name": {
+        "es": "Campo deportivo 6",
+        "en": "Sports Field 6"
+      },
+      "kind": "sports",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "campo-deportivo-7",
+      "siglas": "C7",
+      "name": {
+        "es": "Campo deportivo 7",
+        "en": "Sports Field 7"
+      },
+      "kind": "sports",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "estacionamiento-1",
+      "siglas": "E1",
+      "name": {
+        "es": "Estacionamiento 1",
+        "en": "Parking Lot 1"
+      },
+      "kind": "parking",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "estacionamiento-2",
+      "siglas": "E2",
+      "name": {
+        "es": "Estacionamiento 2",
+        "en": "Parking Lot 2"
+      },
+      "kind": "parking",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "estacionamiento-3",
+      "siglas": "E3",
+      "name": {
+        "es": "Estacionamiento 3",
+        "en": "Parking Lot 3"
+      },
+      "kind": "parking",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "estacionamiento-4",
+      "siglas": "E4",
+      "name": {
+        "es": "Estacionamiento 4",
+        "en": "Parking Lot 4"
+      },
+      "kind": "parking",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "estacionamiento-5",
+      "siglas": "E5",
+      "name": {
+        "es": "Estacionamiento 5",
+        "en": "Parking Lot 5"
+      },
+      "kind": "parking",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "estacionamiento-6",
+      "siglas": "E6",
+      "name": {
+        "es": "Estacionamiento 6",
+        "en": "Parking Lot 6"
+      },
+      "kind": "parking",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "estacionamiento-7",
+      "siglas": "E7",
+      "name": {
+        "es": "Estacionamiento 7",
+        "en": "Parking Lot 7"
+      },
+      "kind": "parking",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "estacionamiento-8",
+      "siglas": "E8",
+      "name": {
+        "es": "Estacionamiento 8",
+        "en": "Parking Lot 8"
+      },
+      "kind": "parking",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "estacionamiento-9",
+      "siglas": "E9",
+      "name": {
+        "es": "Estacionamiento 9",
+        "en": "Parking Lot 9"
+      },
+      "kind": "parking",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "estacionamiento-10",
+      "siglas": "E10",
+      "name": {
+        "es": "Estacionamiento 10",
+        "en": "Parking Lot 10"
+      },
+      "kind": "parking",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "estacionamiento-11",
+      "siglas": "E11",
+      "name": {
+        "es": "Estacionamiento 11",
+        "en": "Parking Lot 11"
+      },
+      "kind": "parking",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "estacionamiento-12",
+      "siglas": "E12",
+      "name": {
+        "es": "Estacionamiento 12",
+        "en": "Parking Lot 12"
+      },
+      "kind": "parking",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "estacionamiento-13",
+      "siglas": "E13",
+      "name": {
+        "es": "Estacionamiento 13",
+        "en": "Parking Lot 13"
+      },
+      "kind": "parking",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "estacionamiento-14",
+      "siglas": "E14",
+      "name": {
+        "es": "Estacionamiento 14",
+        "en": "Parking Lot 14"
+      },
+      "kind": "parking",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "estacionamiento-15",
+      "siglas": "E15",
+      "name": {
+        "es": "Estacionamiento 15",
+        "en": "Parking Lot 15"
+      },
+      "kind": "parking",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "estacionamiento-16",
+      "siglas": "E16",
+      "name": {
+        "es": "Estacionamiento 16",
+        "en": "Parking Lot 16"
+      },
+      "kind": "parking",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "estacionamiento-17",
+      "siglas": "E17",
+      "name": {
+        "es": "Estacionamiento 17",
+        "en": "Parking Lot 17"
+      },
+      "kind": "parking",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "estacionamiento-18",
+      "siglas": "E18",
+      "name": {
+        "es": "Estacionamiento 18",
+        "en": "Parking Lot 18"
+      },
+      "kind": "parking",
+      "categories": [],
+      "entranceNodeIds": []
+    },
+    {
+      "id": "estacionamiento-19",
+      "siglas": "E19",
+      "name": {
+        "es": "Estacionamiento 19",
+        "en": "Parking Lot 19"
+      },
+      "kind": "parking",
+      "categories": [],
+      "entranceNodeIds": []
+    }
+  ],
+  "buildings": [
+    {
+      "id": "bld-cn",
+      "siglas": "CN",
+      "floors": []
+    },
+    {
+      "id": "bld-ia",
+      "siglas": "IA",
+      "floors": []
+    }
+  ],
+  "graph": {
+    "nodes": [],
+    "edges": []
+  }
+}

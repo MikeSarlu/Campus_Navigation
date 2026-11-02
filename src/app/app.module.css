@@ -1,0 +1,34 @@
+.screen {
+  position: relative;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.top {
+  position: absolute;
+  inset: 0 0 auto;
+  padding: max(var(--space-3), env(safe-area-inset-top)) var(--space-4) 0;
+}
+
+.controls {
+  position: absolute;
+  right: var(--space-4);
+  bottom: calc(var(--space-4) + 56px + env(safe-area-inset-bottom));
+}
+
+.bottom {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 0 var(--space-4) max(var(--space-3), env(safe-area-inset-bottom));
+}
+
+.status {
+  display: inline-block;
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-pill);
+}
