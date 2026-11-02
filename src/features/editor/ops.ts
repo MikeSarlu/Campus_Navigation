@@ -4,7 +4,9 @@ import { edgeKind, edgeLength } from '../../core/data/graph';
 import type { CampusData, GraphNode, LngLat, LocalXY } from '../../core/data/types';
 
 export function newId(prefix: string): string {
-  return `${prefix}-${crypto.randomUUID().slice(0, 8)}`;
+  // crypto.randomUUID solo existe con https o localhost (no al abrir el editor por la red local).
+  const random = crypto.randomUUID?.().slice(0, 8) ?? Math.random().toString(36).slice(2, 10).padEnd(8, '0');
+  return `${prefix}-${random}`;
 }
 
 export function getNode(d: CampusData, id: string): GraphNode | undefined {

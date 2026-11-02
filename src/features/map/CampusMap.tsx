@@ -7,6 +7,7 @@ import { pointAlong, sliceLineFrom } from '../../core/routing/planar';
 import { resultLocation } from '../../core/search';
 import { useNav } from '../navigation/navStore';
 import { resultTitle } from '../search/resultText';
+import { campusMaxBounds, isNearCampus } from './campusArea';
 import campusBoundary from './campusBoundary.json';
 import { campusStyle } from './campusStyle';
 import { maplibregl, maplibreReady } from './maplibre';
@@ -52,21 +53,6 @@ function coneImage(): ImageData {
   ctx.closePath();
   ctx.fill();
   return ctx.getImageData(0, 0, size, size);
-}
-
-/**
- * Límites de desplazamiento: un margen corto (~400 m) a los lados del campus. Hacia arriba y abajo
- * se deja lo necesario para que en un celular vertical quepa el campus completo a lo ancho
- * (MapLibre no deja ver nada fuera de estos límites y, si no cupiera, forzaría un acercamiento).
- */
-function campusMaxBounds(): [[number, number], [number, number]] {
-  const [w, s, e, n] = campusBoundary.properties.bbox;
-  const MARGIN_DEG = 0.004;
-  const widthInLatDeg = ((e - w) * 105_220) / 110_540;
-  // 1.7 × el ancho cubre pantallas de hasta ~20:9 aun descontando el espacio de la barra y los controles.
-  const halfLat = Math.max((n - s) / 2 + MARGIN_DEG, widthInLatDeg * 1.7);
-  const midLat = (n + s) / 2;
-  return [[w - MARGIN_DEG, midLat - halfLat], [e + MARGIN_DEG, midLat + halfLat]];
 }
 
 /**
@@ -218,6 +204,7 @@ export function CampusMap() {
       map.touchZoomRotate.disableRotation();
       map.keyboard.disableRotation();
       mapRef.current = map;
+      if (import.meta.env.DEV) (window as unknown as { __map: MapLibreMap }).__map = map;
 
       map.on('load', () => {
         addLayers(map);
@@ -287,13 +274,22 @@ export function CampusMap() {
       const props: Record<string, number> = fix ? { acc: fix.accuracyM } : {};
       if (fix && heading !== null) props.heading = heading;
       (map.getSource('user') as GeoJSONSource).setData(fix ? point(fix.pos, props) : EMPTY);
-      if (fix && following) map.easeTo({ center: fix.pos, zoom: Math.max(map.getZoom(), 17.5) });
     });
-  }, [location, following, heading]);
+  }, [location, heading]);
 
+  // Centrar en el usuario y girar con la brújula van en una sola animación: dos easeTo seguidos
+  // se cancelan, y con la brújula (varias lecturas por segundo) el mapa dejaba de seguir al usuario.
   useEffect(() => {
-    whenReady((map) => map.easeTo({ bearing: orientation === 'heading' && heading !== null ? heading : 0, duration: 250 }));
-  }, [orientation, heading]);
+    whenReady((map) => {
+      const fix = location.fix;
+      // Lejos del campus no se centra: el mapa está limitado al campus y quedaría en blanco.
+      const center = following && fix && isNearCampus(fix.pos) ? fix.pos : undefined;
+      const bearing = orientation === 'heading' && heading !== null ? heading : 0;
+      // Sin nada que mover no se anima, para no interrumpir otros encuadres (destino, ruta).
+      if (!center && bearing === map.getBearing()) return;
+      map.easeTo({ bearing, ...(center && { center, zoom: Math.max(map.getZoom(), 17.5) }), duration: center ? 500 : 250 });
+    });
+  }, [location, following, orientation, heading]);
 
   // Ruta: completa al empezar; con GPS solo lo que falta por caminar.
   const route = useNav((s) => s.route);

@@ -6,6 +6,7 @@ import { haversineM } from '../../core/geo';
 import { findRoute } from '../../core/routing/route';
 import { routeTargets } from '../../core/routing/targets';
 import { resultLocation } from '../../core/search';
+import { isNearCampus } from '../map/campusArea';
 import { useNav } from '../navigation/navStore';
 import { etaMinutes, roundDistance } from '../navigation/stepText';
 import { resultSubtitle, resultTitle } from './resultText';
@@ -17,7 +18,9 @@ export function DetailSheet() {
   const lang = useApp((s) => s.lang);
   const destination = useApp((s) => s.destination);
   const campus = useApp((s) => s.campus);
-  const userPos = useApp((s) => s.location.fix?.pos);
+  // Desde fuera del campus no se calcula tiempo ni distancia (serían de kilómetros).
+  const fixPos = useApp((s) => s.location.fix?.pos);
+  const userPos = fixPos && isNearCampus(fixPos) ? fixPos : undefined;
   const back = useApp((s) => s.back);
   const begin = useNav((s) => s.begin);
   const titleRef = useFocusOnMount<HTMLHeadingElement>();

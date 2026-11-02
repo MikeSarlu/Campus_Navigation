@@ -57,6 +57,25 @@ describe('buildIndoorLeg', () => {
   });
 });
 
+describe('findRoute y otros edificios', () => {
+  it('no atraviesa un edificio como atajo hacia un destino exterior', () => {
+    const { data, outside } = building();
+    // Segunda entrada del piso 1 y un camino exterior largo que rodea el edificio.
+    const local = { buildingId: 'b', level: 1, xy: [20, 20] as LocalXY };
+    const exit = addNode(data, { kind: 'entrance', local: { ...local, xy: [20, 30] } });
+    const corridor = data.graph.nodes.find((n) => n.local?.level === 1 && n.local.xy[1] === 20 && n.local.xy[0] === 20)!.id;
+    connect(data, corridor, exit);
+    const far = addNode(data, { kind: 'path', pos: [-98.2798, 19.0498] });
+    connect(data, exit, far);
+    const around = addNode(data, { kind: 'path', pos: [-98.2790, 19.0505] });
+    connect(data, outside, around);
+    connect(data, around, far);
+    const route = findRoute(data, { nodeId: outside }, [far])!;
+    expect(route.nodes.every((n) => !n.node?.local)).toBe(true);
+    expect(route.indoorFrom).toBe(route.nodes.length);
+  });
+});
+
 describe('doorSide', () => {
   it('caminando hacia el este, un salón al sur (y mayor) queda a la derecha', () => {
     expect(doorSide([0, 10], [10, 10], [10, 15])).toBe('right');

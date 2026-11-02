@@ -19,7 +19,8 @@ const KEY = 'campus.reports';
 
 function read(): Report[] {
   try {
-    return JSON.parse(localStorage.getItem(KEY) ?? '[]') as Report[];
+    const stored: unknown = JSON.parse(localStorage.getItem(KEY) ?? '[]');
+    return Array.isArray(stored) ? (stored as Report[]) : [];
   } catch {
     return [];
   }
@@ -33,6 +34,11 @@ function write(reports: Report[]) {
   }
 }
 
+/** crypto.randomUUID solo existe con https o localhost; al probar por la red local (http) no. */
+function newId(): string {
+  return crypto.randomUUID?.() ?? `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
 interface ReportsState {
   reports: Report[];
   submit: (r: Omit<Report, 'id' | 'createdAt' | 'status'>, online: boolean) => Report;
@@ -43,7 +49,7 @@ interface ReportsState {
 export const useReports = create<ReportsState>((set, get) => ({
   reports: read(),
   submit: (r, online) => {
-    const report: Report = { ...r, id: crypto.randomUUID(), createdAt: new Date().toISOString(), status: online ? 'sent' : 'draft' };
+    const report: Report = { ...r, id: newId(), createdAt: new Date().toISOString(), status: online ? 'sent' : 'draft' };
     const reports = [report, ...get().reports];
     write(reports);
     set({ reports });

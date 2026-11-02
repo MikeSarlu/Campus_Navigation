@@ -1,20 +1,36 @@
 // Conecta los sensores del teléfono con el estado de la app. Un solo observador de cada uno.
 import { requestHeadingPermission, watchHeading } from '../core/sensors/heading';
-import { watchLocation } from '../core/sensors/location';
+import { watchLocation, type LocationFix } from '../core/sensors/location';
+import { isNearCampus } from '../features/map/campusArea';
 import { useApp } from './store';
 
 let stopLocation: (() => void) | null = null;
 let stopHeading: (() => void) | null = null;
 
+/** Si el mapa iba a seguir una ubicación lejos del campus, lo deja quieto y avisa (una vez). */
+function stopFollowingIfFar(fix: LocationFix): void {
+  const st = useApp.getState();
+  if (!st.following || isNearCampus(fix.pos)) return;
+  st.setFollowing(false);
+  // Al navegar, la navegación ya da su propio aviso ('nav.farFromCampus').
+  if (st.view !== 'navigate') st.showToast('location.farFromCampus');
+}
+
 /** Botón "Mi ubicación": empieza a seguir la ubicación (si hace falta) y centra el mapa. */
 export function locateMe(): void {
   const s = useApp.getState();
   s.setFollowing(true);
-  if (stopLocation && s.location.status !== 'denied' && s.location.status !== 'unavailable') return;
+  if (stopLocation && s.location.status !== 'denied' && s.location.status !== 'unavailable') {
+    if (s.location.fix) stopFollowingIfFar(s.location.fix);
+    return;
+  }
   stopLocation?.();
   s.setLocation({ status: 'locating' });
   stopLocation = watchLocation(
-    (fix) => useApp.getState().setLocation({ status: 'on', fix }),
+    (fix) => {
+      useApp.getState().setLocation({ status: 'on', fix });
+      stopFollowingIfFar(fix);
+    },
     (status) => {
       const st = useApp.getState();
       // Un error pasajero no borra una ubicación que ya teníamos.

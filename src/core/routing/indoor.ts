@@ -105,8 +105,9 @@ function walkSteps(run: RouteNode[], level: number, first: IndoorStep['kind']): 
 export function buildIndoorLeg(route: Route, data: CampusData): IndoorLeg | null {
   if (route.indoorFrom >= route.nodes.length) return null;
   const nodes = route.nodes.slice(Math.max(0, route.indoorFrom - 1));
-  if (!nodes[0].node?.local) return null;
-  const buildingId = nodes[0].node.local.buildingId;
+  // Todo el tramo debe estar dentro del edificio (findRoute no cruza otros edificios).
+  if (!nodes.every((n) => n.node?.local)) return null;
+  const buildingId = nodes[0].node!.local!.buildingId;
 
   const steps: IndoorStep[] = [];
   const pathsByLevel = new Map<number, LocalXY[][]>();

@@ -110,6 +110,11 @@ export function findRoute(data: CampusData, from: LngLat | { nodeId: string }, t
   }
 
   const targetSet = new Set(targets);
+  // Los pasillos solo se recorren dentro del edificio de destino. Cruzar otro edificio como atajo
+  // partiría la ruta exterior en su entrada y la guía interior no tendría a dónde llevar.
+  const destBuildings = new Set(targets.flatMap((id) => byId.get(id)?.local?.buildingId ?? []));
+  const insideOther = (id: string, kind: EdgeKind) =>
+    (kind === 'indoor' || kind === 'stairs') && !destBuildings.has(byId.get(id)?.local?.buildingId ?? '');
   const dist = new Map<string, number>([[startId, 0]]);
   const prev = new Map<string, { id: string; kind: EdgeKind }>();
   const done = new Set<string>();
@@ -128,6 +133,7 @@ export function findRoute(data: CampusData, from: LngLat | { nodeId: string }, t
       break;
     }
     for (const { to, lengthM, kind } of adj.get(id) ?? []) {
+      if (insideOther(to, kind)) continue;
       const nd = dist.get(id)! + lengthM;
       if (nd < (dist.get(to) ?? Infinity)) {
         dist.set(to, nd);

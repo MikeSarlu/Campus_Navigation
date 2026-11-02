@@ -97,3 +97,28 @@
   border-radius: var(--radius-pill);
   display: inline-block;
 }
+
+.crash {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  min-height: 100dvh;
+  padding: var(--space-4);
+  text-align: center;
+  font-size: 1.125rem;
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+
+.crash button {
+  min-height: 48px;
+  padding: 0 var(--space-4);
+  font: inherit;
+  font-weight: 600;
+  color: #ffffff;
+  background: var(--color-accent);
+  border: 0;
+  border-radius: var(--radius);
+}

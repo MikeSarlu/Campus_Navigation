@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { locateMe } from '../../app/sensors';
 import { useApp } from '../../app/store';
+import { isNearCampus } from '../map/campusArea';
 import type { LngLat } from '../../core/data/types';
 import { buildIndoorLeg, type IndoorLeg } from '../../core/routing/indoor';
 import { buildSteps, currentStepIndex, type Step } from '../../core/routing/instructions';
@@ -33,6 +34,8 @@ interface NavState {
   offRouteReadings: number;
   /** Esperando que el usuario toque su punto de partida en el mapa. */
   pickingOnMap: boolean;
+  /** Al elegir partida: la próxima lectura de GPS inicia la ruta. */
+  waitingForGps: boolean;
   /** Tramo dentro del edificio (fase 'indoor'): se avanza con Siguiente/Anterior. */
   indoor: IndoorLeg | null;
   indoorIndex: number;
@@ -57,7 +60,7 @@ interface NavState {
 
 const initial = {
   phase: 'idle' as NavPhase, mode: 'gps' as const, route: null, steps: [], stepIndex: 0, alongM: 0, offRouteReadings: 0,
-  pickingOnMap: false, indoor: null, indoorIndex: 0, viewLevel: null, show3D: false,
+  pickingOnMap: false, waitingForGps: false, indoor: null, indoorIndex: 0, viewLevel: null, show3D: false,
 };
 
 export const useNav = create<NavState>((set, get) => ({
@@ -69,13 +72,19 @@ export const useNav = create<NavState>((set, get) => ({
     app.openNavigate();
     const fix = app.location.status === 'on' ? app.location.fix : undefined;
     if (fix) get().startFrom(fix.pos, 'gps');
-    else set({ ...initial, phase: 'choosingStart' });
+    else set({ ...initial, phase: 'choosingStart', waitingForGps: true });
   },
 
   startFrom: (pos, mode) => {
     const app = useApp.getState();
     if (app.campus.status !== 'ready' || !app.destination) return;
     const data = app.campus.data;
+    if (mode === 'gps' && !isNearCampus(pos)) {
+      // Desde fuera del campus no hay caminos que seguir: se elige la partida a mano.
+      app.showToast('nav.farFromCampus');
+      set({ ...initial, phase: 'choosingStart' });
+      return;
+    }
     const route = findRoute(data, pos, routeTargets(app.destination, data));
     if (!route) {
       app.showToast('nav.noRoute');
@@ -87,11 +96,11 @@ export const useNav = create<NavState>((set, get) => ({
     app.setFollowing(mode === 'gps');
   },
 
-  setPickingOnMap: (pickingOnMap) => set({ pickingOnMap }),
+  setPickingOnMap: (pickingOnMap) => set({ pickingOnMap, waitingForGps: false }),
 
   onFix: (fix) => {
     const s = get();
-    if (s.phase === 'choosingStart' && !s.pickingOnMap) {
+    if (s.phase === 'choosingStart' && s.waitingForGps) {
       // El usuario pidió usar su ubicación y acaba de llegar la primera lectura.
       get().startFrom(fix.pos, 'gps');
       return;
@@ -153,7 +162,7 @@ useApp.subscribe((state, prev) => {
 
 /** "Usar mi ubicación" en el selector de partida. */
 export function startWithMyLocation(): void {
-  useNav.getState().setPickingOnMap(false);
+  useNav.setState({ pickingOnMap: false, waitingForGps: true });
   const fix = useApp.getState().location.fix;
   if (fix && useApp.getState().location.status === 'on') useNav.getState().startFrom(fix.pos, 'gps');
   else locateMe();
