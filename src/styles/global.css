@@ -40,6 +40,11 @@ button {
   outline-offset: 2px;
 }
 
+/* Títulos que reciben el foco al abrir una vista (para el lector de pantalla): sin recuadro. */
+[tabindex='-1']:focus {
+  outline: none;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -54,4 +59,15 @@ button {
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* Botón "i" de la atribución del mapa: MapLibre lo hace de 24 px; se agranda para tocarlo con el dedo (WCAG 2.2). */
+.maplibregl-ctrl-attrib.maplibregl-compact .maplibregl-ctrl-attrib-button {
+  width: 36px;
+  height: 36px;
+  background-position: center;
+}
+
+.maplibregl-ctrl-attrib.maplibregl-compact {
+  min-height: 36px;
 }

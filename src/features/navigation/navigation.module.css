@@ -24,6 +24,11 @@
   pointer-events: none !important;
 }
 
+/* Sin tarjeta inferior (elegir partida): se dejan libres los 40 px de la atribución del mapa. */
+.controls:last-child {
+  padding-bottom: calc(var(--space-4) + 40px + env(safe-area-inset-bottom));
+}
+
 /* Tarjetas de navegación: grandes y de alto contraste para leer de un vistazo caminando al sol. */
 .topCard,
 .bottomCard {

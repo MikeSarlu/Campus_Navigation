@@ -64,7 +64,7 @@ export function IndoorPlan({ data, building, level, leg, stepIndex }: Props) {
         const [x, y] = centroid(r.polygon);
         return (
           <g key={r.code}>
-            <polygon points={pts(r.polygon)} fill={isDest ? '#c8102e' : '#ffffff'} fillOpacity={isDest ? 0.85 : 1}
+            <polygon points={pts(r.polygon)} fill={isDest ? '#b00e28' : '#ffffff'} fillOpacity={isDest ? 0.85 : 1}
               stroke="#4d4d49" strokeWidth={u * 0.4} />
             <text x={x} y={y} fontSize={u * 3.6} fontWeight="700" textAnchor="middle" dominantBaseline="middle"
               fill={isDest ? '#ffffff' : '#0b0b0b'} className={styles.label}>{r.code}</text>
@@ -90,7 +90,7 @@ export function IndoorPlan({ data, building, level, leg, stepIndex }: Props) {
       {special.map((n) => (
         <g key={n.id} transform={`translate(${n.local!.xy[0]} ${n.local!.xy[1]})`}>
           <rect x={-u * 2.2} y={-u * 2.2} width={u * 4.4} height={u * 4.4} rx={u * 0.8}
-            fill={n.kind === 'entrance' ? '#0a7a2f' : '#7a2fd0'} stroke="#fff" strokeWidth={u * 0.5} />
+            fill={n.kind === 'entrance' ? '#086627' : '#732cc4'} stroke="#fff" strokeWidth={u * 0.5} />
           {/* Símbolo dibujado en una caja de 24 unidades: escalones, flechas de elevador o puerta. */}
           <path transform={`scale(${(u * 3.4) / 24}) translate(-12 -12)`} fill="none" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"
             d={n.kind === 'stairs' ? 'M4 20h5v-5h5v-5h5V5' : n.kind === 'elevator' ? 'M8 10l4-5 4 5M8 14l4 5 4-5' : 'M6 4h9v16H6zM11 12h9M17 9l3 3-3 3'} />
@@ -98,7 +98,7 @@ export function IndoorPlan({ data, building, level, leg, stepIndex }: Props) {
       ))}
 
       {destDoor.level === level && (
-        <circle cx={destDoor.path[0][0]} cy={destDoor.path[0][1]} r={u * 2.2} fill="#c8102e" stroke="#fff" strokeWidth={u * 0.7} />
+        <circle cx={destDoor.path[0][0]} cy={destDoor.path[0][1]} r={u * 2.2} fill="#b00e28" stroke="#fff" strokeWidth={u * 0.7} />
       )}
       {here && <circle cx={here[0]} cy={here[1]} r={u * 2.2} fill="#1a73e8" stroke="#fff" strokeWidth={u * 0.8} />}
     </svg>

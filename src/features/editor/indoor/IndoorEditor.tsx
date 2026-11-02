@@ -14,7 +14,7 @@ interface View {
 
 const HIT_PX = 14;
 const NODE_COLORS: Record<GraphNode['kind'], string> = {
-  corridor: '#0040c1', path: '#0040c1', door: '#c8102e', stairs: '#7a2fd0', elevator: '#7a2fd0', entrance: '#0a7a2f',
+  corridor: '#0040c1', path: '#0040c1', door: '#b00e28', stairs: '#732cc4', elevator: '#732cc4', entrance: '#086627',
 };
 
 function centroid(poly: LocalXY[]): LocalXY {
@@ -273,7 +273,7 @@ export function IndoorEditor() {
         )}
 
         {anchorRef && (
-          <g stroke="#7a2fd0" strokeWidth={px(3)}>
+          <g stroke="#732cc4" strokeWidth={px(3)}>
             <line x1={anchorRef[0] - px(12)} y1={anchorRef[1]} x2={anchorRef[0] + px(12)} y2={anchorRef[1]} />
             <line x1={anchorRef[0]} y1={anchorRef[1] - px(12)} x2={anchorRef[0]} y2={anchorRef[1] + px(12)} />
           </g>

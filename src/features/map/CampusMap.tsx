@@ -120,7 +120,7 @@ function addLayers(map: MapLibreMap) {
   });
   map.addLayer({
     id: 'destination', type: 'circle', source: 'destination',
-    paint: { 'circle-radius': 13, 'circle-color': '#c8102e', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 4 },
+    paint: { 'circle-radius': 13, 'circle-color': '#b00e28', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 4 },
   });
   map.addLayer({
     id: 'destination-label', type: 'symbol', source: 'destination',
@@ -132,7 +132,7 @@ function addLayers(map: MapLibreMap) {
       'text-offset': [0, -1.3],
       'text-allow-overlap': true,
     },
-    paint: { 'text-color': '#c8102e', 'text-halo-color': '#ffffff', 'text-halo-width': 3 },
+    paint: { 'text-color': '#b00e28', 'text-halo-color': '#ffffff', 'text-halo-width': 3 },
   });
 }
 

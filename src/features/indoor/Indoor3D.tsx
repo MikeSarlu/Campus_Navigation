@@ -99,9 +99,9 @@ export function Indoor3D({ data, building, leg, stepIndex, label, floorLabel }: 
           const geo = new THREE.ExtrudeGeometry(new THREE.Shape(room.polygon.map(([x, y]) => new THREE.Vector2(x, -y))), { depth: 2.2, bevelEnabled: false });
           geo.rotateX(-Math.PI / 2);
           geo.translate(0, height(level) + 0.4, 0);
-          scene.add(new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: '#c8102e', transparent: true, opacity: 0.8 })));
+          scene.add(new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ color: '#b00e28', transparent: true, opacity: 0.8 })));
         }
-        scene.add(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(ring), new THREE.LineBasicMaterial({ color: isDest ? '#c8102e' : '#8c8c86' })));
+        scene.add(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(ring), new THREE.LineBasicMaterial({ color: isDest ? '#b00e28' : '#8c8c86' })));
       }
     }
 
@@ -129,7 +129,7 @@ export function Indoor3D({ data, building, leg, stepIndex, label, floorLabel }: 
     const step = leg.steps[stepIndex];
     dot('#1a73e8', v3(step.path[0], step.level, 1.2));
     const end = leg.steps.at(-1)!;
-    dot('#c8102e', v3(end.path[0], end.level, 1.2));
+    dot('#b00e28', v3(end.path[0], end.level, 1.2));
 
     // Cámara en diagonal, mirando al centro del edificio.
     const center = box.isEmpty() ? new THREE.Vector3() : box.getCenter(new THREE.Vector3());

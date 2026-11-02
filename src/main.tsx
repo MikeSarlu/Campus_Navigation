@@ -32,4 +32,12 @@ if (import.meta.env.DEV) {
   void Promise.all([import('./app/store'), import('./features/navigation/navStore')]).then(([app, nav]) => {
     Object.assign(window, { __campus: { useApp: app.useApp, useNav: nav.useNav } });
   });
+  // Auditoría de accesibilidad desde la consola: await __axe()
+  Object.assign(window, {
+    __axe: async () => {
+      const { default: axe } = await import('axe-core');
+      const res = await axe.run(document, { runOnly: ['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa', 'best-practice'] });
+      return res.violations.map((v) => ({ id: v.id, impact: v.impact, help: v.help, nodes: v.nodes.map((n) => n.target.join(' ')).slice(0, 5) }));
+    },
+  });
 }

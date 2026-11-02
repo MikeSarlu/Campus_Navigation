@@ -48,7 +48,7 @@ function addOverlayLayers(map: maplibregl.Map) {
 
   map.addLayer({
     id: 'outlines', type: 'line', source: 'outlines',
-    paint: { 'line-color': ['case', ['get', 'selected'], '#ff6a00', '#7a2fd0'], 'line-width': 3, 'line-dasharray': [2, 1] },
+    paint: { 'line-color': ['case', ['get', 'selected'], '#ff6a00', '#732cc4'], 'line-width': 3, 'line-dasharray': [2, 1] },
   });
   map.addLayer({
     id: 'edges-casing', type: 'line', source: 'edges',
@@ -59,7 +59,7 @@ function addOverlayLayers(map: maplibregl.Map) {
     id: 'edges', type: 'line', source: 'edges',
     layout: { 'line-cap': 'round' },
     paint: {
-      'line-color': ['case', ['get', 'selected'], '#ff6a00', ['==', ['get', 'kind'], 'entrance'], '#0a7a2f', '#0040c1'],
+      'line-color': ['case', ['get', 'selected'], '#ff6a00', ['==', ['get', 'kind'], 'entrance'], '#086627', '#0040c1'],
       'line-width': ['case', ['get', 'selected'], 7, 4],
     },
   });
@@ -67,7 +67,7 @@ function addOverlayLayers(map: maplibregl.Map) {
     id: 'nodes', type: 'circle', source: 'nodes',
     paint: {
       'circle-radius': ['case', ['get', 'selected'], 9, ['==', ['get', 'kind'], 'entrance'], 8, 5],
-      'circle-color': ['case', ['get', 'selected'], '#ff6a00', ['==', ['get', 'kind'], 'entrance'], '#0a7a2f', '#0040c1'],
+      'circle-color': ['case', ['get', 'selected'], '#ff6a00', ['==', ['get', 'kind'], 'entrance'], '#086627', '#0040c1'],
       'circle-stroke-color': '#ffffff',
       'circle-stroke-width': 2,
     },

@@ -249,7 +249,7 @@ Pantalla verde: "Llegaste a CN‑220". Botón "Listo".
 ## 7. Lineamientos visuales (luz solar)
 
 - **Contraste:** objetivo WCAG **AAA** (7:1) para texto y controles esenciales.
-- **Colores:** fondo `#FFFFFF`; texto `#0B0B0B`; ruta `#0040C1` de 8 px con borde blanco de 3 px; destino `#C8102E`; llegada `#0A7A2F`; sin grises claros para información.
+- **Colores:** fondo `#FFFFFF`; texto `#0B0B0B`; ruta `#0040C1` de 8 px con borde blanco de 3 px; destino `#b00e28`; llegada `#086627`; sin grises claros para información.
 - **Mapa:** estilo propio desaturado, con edificios en gris medio con contorno oscuro y etiquetas grandes con halo blanco, para que la ruta azul domine.
 - **Tipografía:** Inter o la del sistema, 17 px mínimo para el cuerpo y 22–28 px para la instrucción de navegación, con peso 600+ en lo importante.
 - **Toques:** objetivos de 48 × 48 px mínimo y acciones principales abajo (alcance con una mano).
@@ -298,17 +298,17 @@ Detección con `navigator.languages`: el primer idioma que empiece con `es` o `e
 
 ## 11. Plan de implementación
 
-| Fase | Entregable |
-|---|---|
-| 0 | Proyecto base (Vite + React + TS), tokens de diseño, i18n, carga de `campus.json` con datos de ejemplo, despliegue inicial en Vercel |
-| 1 | **Editor**: modo exterior y modo interior, validación, export/import |
-| 2 | Mapa (teselas locales + estilo "sol"), controles, búsqueda, abreviaturas, atajos, detalle |
-| 3 | Rutas exteriores, navegación, recálculo, punto de partida manual, estados de sensores |
-| 4 | Navegación interior paso a paso, selector de piso, vista 3D, "Llegué" |
-| 5 | PWA sin conexión, reportes simulados, estados de carga y conexión |
-| 6 | Revisión de accesibilidad (contraste AAA, lector de pantalla, botón atrás) y prueba piloto en campus |
+| Fase | Entregable | Estado |
+|---|---|---|
+| 0 | Proyecto base (Vite + React + TS), tokens de diseño, i18n, carga de `campus.json` con datos de ejemplo, despliegue inicial en Vercel | Hecha |
+| 1 | **Editor**: modo exterior y modo interior, validación, export/import | Hecha |
+| 2 | Mapa (teselas locales + estilo "sol"), controles, búsqueda, abreviaturas, atajos, detalle | Hecha |
+| 3 | Rutas exteriores, navegación, recálculo, punto de partida manual, estados de sensores | Hecha |
+| 4 | Navegación interior paso a paso, selector de piso, vista 3D, "Llegué" | Hecha |
+| 5 | PWA sin conexión, reportes simulados, estados de carga y conexión | Hecha |
+| 6 | Revisión de accesibilidad (contraste AAA, lector de pantalla, botón atrás) y prueba piloto en campus | Revisión hecha; piloto preparado, falta realizarlo en campus |
 
-El levantamiento de datos (de ustedes) puede empezar en cuanto esté la fase 1.
+El levantamiento de datos (de ustedes) puede empezar en cuanto esté la fase 1. La prueba piloto se prepara con [PRUEBA_PILOTO.md](PRUEBA_PILOTO.md); la revisión de accesibilidad está en [ACCESIBILIDAD.md](ACCESIBILIDAD.md).
 
 ## 12. Riesgos y pendientes
 

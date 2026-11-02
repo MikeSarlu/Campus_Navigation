@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { TurnIcon } from '../../app/icons';
 import { useApp, useT } from '../../app/store';
+import { useFocusOnMount } from '../../app/useFocusOnMount';
 import { useNav } from '../navigation/navStore';
 import { arrivalName, indoorStepText } from '../navigation/stepText';
 import { IndoorPlan } from './IndoorPlan';
@@ -20,6 +21,7 @@ export function IndoorView() {
   const back = useApp((s) => s.back);
   const { indoor, indoorIndex, viewLevel, show3D } = useNav();
   const { indoorGo, setViewLevel, setShow3D, arrive } = useNav.getState();
+  const topRef = useFocusOnMount<HTMLElement>();
 
   if (campus.status !== 'ready' || !indoor || !destination || viewLevel === null) return null;
   const building = campus.data.buildings.find((b) => b.id === indoor.buildingId);
@@ -32,7 +34,7 @@ export function IndoorView() {
 
   return (
     <div className={styles.screen}>
-      <section className={styles.top} aria-live="polite" aria-atomic="true">
+      <section ref={topRef} tabIndex={-1} className={styles.top} aria-live="polite" aria-atomic="true">
         <div className={styles.instruction}>
           <TurnIcon kind={step.kind === 'turn' ? step.turn! : ICON[step.kind]} />
           <div>

@@ -56,6 +56,11 @@ Abre `http://localhost:5173/editor` (o `/editor` en el sitio publicado). Los tex
 
 Se abren desde la búsqueda: "¿Falta un salón? Repórtalo" o "Reportar salón faltante" cuando no hay resultados. El formulario propone el edificio y el piso a partir del código. **En el prototipo el envío es simulado:** los reportes se guardan en el teléfono como *Borrador* (sin conexión) o *Enviado* (con conexión), y los borradores pasan a *Enviado* solos al volver la conexión.
 
+## Accesibilidad y prueba piloto
+
+- [docs/ACCESIBILIDAD.md](docs/ACCESIBILIDAD.md): qué se verificó (contraste AAA con pruebas automáticas, axe-core sin violaciones), qué se cambió y qué falta revisar a mano en un teléfono.
+- [docs/PRUEBA_PILOTO.md](docs/PRUEBA_PILOTO.md): lista de preparación, guion por participante según el plan de pruebas del reporte, criterios de éxito y cómo calibrar la app con lo observado. Los resultados se anotan en [docs/resultados_piloto.csv](docs/resultados_piloto.csv).
+
 ## Ajustes para calibrar en las pruebas
 
 Valores pensados para ajustarse después de probar en campus:

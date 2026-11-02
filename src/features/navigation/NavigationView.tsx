@@ -1,6 +1,7 @@
 import { useMemo, type ReactNode } from 'react';
 import { LocateIcon, TurnIcon } from '../../app/icons';
 import { useApp, useT } from '../../app/store';
+import { useFocusOnMount } from '../../app/useFocusOnMount';
 import type { Step } from '../../core/routing/instructions';
 import { NEAR_END_M, startWithMyLocation, useNav } from './navStore';
 import styles from './navigation.module.css';
@@ -29,6 +30,7 @@ function StartPicker() {
   const lang = useApp((s) => s.lang);
   const picking = useNav((s) => s.pickingOnMap);
   const { setPickingOnMap, startFrom } = useNav.getState();
+  const titleRef = useFocusOnMount<HTMLHeadingElement>();
   const sorted = useMemo(
     () => (campus.status === 'ready' ? campus.data.places.filter((p) => p.location) : [])
       .sort((a, b) => a.name[lang].localeCompare(b.name[lang], lang)),
@@ -37,7 +39,7 @@ function StartPicker() {
 
   return (
     <section className={styles.topCard} aria-labelledby="start-title">
-      <h2 id="start-title" className={styles.cardTitle}>{t('start.title')}</h2>
+      <h2 id="start-title" ref={titleRef} tabIndex={-1} className={styles.cardTitle}>{t('start.title')}</h2>
       <div className={styles.startOptions}>
         <button type="button" className={styles.primary} onClick={startWithMyLocation} aria-busy={locating}>
           <LocateIcon /> {locating ? t('start.locating') : t('start.gps')}
@@ -87,6 +89,7 @@ function ActiveNavigation({ controls }: { controls: ReactNode }) {
   const back = useApp((s) => s.back);
   const { mode, route, steps, stepIndex, alongM } = useNav();
   const { next, prev, arrive, enterIndoor } = useNav.getState();
+  const cardRef = useFocusOnMount<HTMLElement>();
   if (!route || !destination || !steps.length) return null;
 
   const last = steps.length - 1;
@@ -119,7 +122,7 @@ function ActiveNavigation({ controls }: { controls: ReactNode }) {
 
   return (
     <>
-      <section className={styles.topCard} aria-live="polite" aria-atomic="true">
+      <section ref={cardRef} tabIndex={-1} className={styles.topCard} aria-live="polite" aria-atomic="true">
         {instruction}
         {hint && <p className={styles.floorHint}>{hint}</p>}
         {approx && <p className={styles.approx}>{t('nav.approx', { m: Math.round(fix.accuracyM) })}</p>}
@@ -162,11 +165,12 @@ function Arrived() {
   const lang = useApp((s) => s.lang);
   const destination = useApp((s) => s.destination);
   const goHome = useApp((s) => s.goHome);
+  const titleRef = useFocusOnMount<HTMLParagraphElement>();
   if (!destination) return null;
   const name = destination.type === 'place' ? destination.place.name[lang] : destination.type === 'room' ? destination.code : destination.code.code;
   return (
     <section className={styles.arrived} role="status" aria-live="assertive">
-      <p className={styles.arrivedTitle}>{t('arrived.title')}</p>
+      <p ref={titleRef} tabIndex={-1} className={styles.arrivedTitle}>{t('arrived.title')}</p>
       <p className={styles.arrivedName}>{name}</p>
       <button type="button" className={styles.done} onClick={goHome}>{t('arrived.done')}</button>
     </section>

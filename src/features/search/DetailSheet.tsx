@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { ClearIcon } from '../../app/icons';
 import { useApp, useT } from '../../app/store';
+import { useFocusOnMount } from '../../app/useFocusOnMount';
 import { haversineM } from '../../core/geo';
 import { findRoute } from '../../core/routing/route';
 import { routeTargets } from '../../core/routing/targets';
@@ -19,6 +20,7 @@ export function DetailSheet() {
   const userPos = useApp((s) => s.location.fix?.pos);
   const back = useApp((s) => s.back);
   const begin = useNav((s) => s.begin);
+  const titleRef = useFocusOnMount<HTMLHeadingElement>();
 
   const data = campus.status === 'ready' ? campus.data : null;
   const targets = useMemo(() => (destination && data ? routeTargets(destination, data) : []), [destination, data]);
@@ -37,7 +39,7 @@ export function DetailSheet() {
     <section className={styles.sheet} aria-labelledby="detail-title">
       <div className={styles.sheetHeader}>
         <div>
-          <h2 id="detail-title" className={styles.sheetTitle}>{resultTitle(destination, lang)}</h2>
+          <h2 id="detail-title" ref={titleRef} tabIndex={-1} className={styles.sheetTitle}>{resultTitle(destination, lang)}</h2>
           <p className={styles.sheetSubtitle}>{resultSubtitle(destination, lang)}</p>
         </div>
         <button type="button" className={styles.iconButton} onClick={back} aria-label={t('detail.close')}>

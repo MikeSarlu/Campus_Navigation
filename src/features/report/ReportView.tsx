@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { BackIcon } from '../../app/icons';
 import { useApp, useT } from '../../app/store';
+import { useFocusOnMount } from '../../app/useFocusOnMount';
 import { normalizeQuery, parseRoomCode } from '../../core/data/codes';
 import styles from './report.module.css';
 import { useReports, type Report } from './reports';
@@ -16,6 +17,7 @@ export function ReportView() {
   const back = useApp((s) => s.back);
   const reports = useReports((s) => s.reports);
   const submit = useReports((s) => s.submit);
+  const titleRef = useFocusOnMount<HTMLHeadingElement>();
 
   const buildings = useMemo(
     () => (campus.status === 'ready' ? campus.data.places.filter((p) => p.kind === 'building' && p.siglas) : [])
@@ -71,7 +73,7 @@ export function ReportView() {
         <button type="button" className={styles.iconButton} onClick={back} aria-label={t('search.back')}>
           <BackIcon />
         </button>
-        <h2>{t('report.title')}</h2>
+        <h2 ref={titleRef} tabIndex={-1}>{t('report.title')}</h2>
       </header>
 
       <div className={styles.body}>
