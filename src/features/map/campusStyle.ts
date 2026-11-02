@@ -22,14 +22,15 @@ const C = {
 const GREEN_KINDS = ['grass', 'park', 'garden', 'meadow', 'grassland', 'forest', 'recreation_ground', 'playground', 'scrub'];
 const PATH_KINDS = ['footway', 'pedestrian', 'path', 'crossing', 'steps', 'cycleway'];
 
-export function campusStyle(origin: string): StyleSpecification {
+/** Estilo del mapa. Usa el protocolo campus:// (ver maplibre.ts) para funcionar sin conexión. */
+export function campusStyle(): StyleSpecification {
   return {
     version: 8,
-    glyphs: `${origin}/fonts/{fontstack}/{range}.pbf`,
+    glyphs: 'campus://fonts/{fontstack}/{range}.pbf',
     sources: {
       osm: {
         type: 'vector',
-        tiles: [`${origin}/tiles/{z}/{x}/{y}.mvt`],
+        tiles: ['campus://tiles/{z}/{x}/{y}.mvt'],
         minzoom: 0,
         maxzoom: 15,
         bounds: CAMPUS_BBOX,

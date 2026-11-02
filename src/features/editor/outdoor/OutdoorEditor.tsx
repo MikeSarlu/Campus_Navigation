@@ -1,10 +1,10 @@
 import type { GeoJSONSource, MapMouseEvent, StyleSpecification } from 'maplibre-gl';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { LineString, Point } from 'geojson';
 import type { LngLat, LocalXY } from '../../../core/data/types';
 import { distanceXY, pointToSegment } from '../../../core/geo';
 import { CAMPUS_CENTER } from '../../map/campusStyle';
-import { maplibregl } from '../../map/maplibre';
+import { maplibregl, maplibreReady } from '../../map/maplibre';
 import styles from '../editor.module.css';
 import { useEditor } from '../editorStore';
 import { moveNode } from '../ops';
@@ -112,6 +112,8 @@ export function OutdoorEditor({ basemap, gpsPos }: { basemap: Basemap; gpsPos?: 
   const mapRef = useRef<maplibregl.Map | null>(null);
   const loaded = useRef(false);
   const markers = useRef<maplibregl.Marker[]>([]);
+  // El mapa se crea de forma asíncrona: los efectos que lo usan se repiten cuando está listo.
+  const [mapReady, setMapReady] = useState(false);
 
   const data = useEditor((s) => s.data);
   const selection = useEditor((s) => s.selection);
@@ -120,81 +122,95 @@ export function OutdoorEditor({ basemap, gpsPos }: { basemap: Basemap; gpsPos?: 
 
   // Crear el mapa una sola vez.
   useEffect(() => {
-    const map = new maplibregl.Map({ container: container.current!, style: STYLE, center: CAMPUS_CENTER, zoom: 16.5, maxZoom: 21 });
-    mapRef.current = map;
-    map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), 'top-right');
-    map.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-left');
-
-    map.on('load', () => {
-      addOverlayLayers(map);
-      loaded.current = true;
-      refresh();
+    // El mapa se crea cuando el worker de MapLibre está listo (ver maplibre.ts).
+    let dispose: (() => void) | undefined;
+    let cancelled = false;
+    void maplibreReady.then(() => {
+      if (!cancelled) dispose = createMap();
     });
-
-    map.on('click', (e: MapMouseEvent) => {
-      const pos: LngLat = [e.lngLat.lng, e.lngLat.lat];
-      const hit = hitTest(map, e.point);
-      const s = useEditor.getState();
-      switch (s.outdoorTool) {
-        case 'select':
-          if (!hit) s.select(null);
-          else if ('node' in hit) s.select({ type: 'node', id: hit.node });
-          else s.select({ type: 'edge', from: hit.edge[0], to: hit.edge[1] });
-          break;
-        case 'path':
-          addPathPoint(pos, hit);
-          break;
-        case 'place':
-          setPlaceLocation(pos);
-          break;
-        case 'entrance':
-          addEntrance(pos, hit);
-          break;
-        case 'anchor':
-          setAnchorWorld(pos);
-          break;
-        case 'delete':
-          deleteHit(hit);
-          break;
-      }
-    });
-
-    // Arrastrar nodos exteriores con la herramienta de selección.
-    let dragging: string | null = null;
-    const onDown = (e: maplibregl.MapLayerMouseEvent | maplibregl.MapLayerTouchEvent) => {
-      const f = e.features?.[0];
-      if (useEditor.getState().outdoorTool !== 'select' || !f?.properties.draggable) return;
-      e.preventDefault();
-      dragging = f.properties.id as string;
-      useEditor.getState().select({ type: 'node', id: dragging });
-      map.getCanvas().style.cursor = 'grabbing';
-    };
-    const onMove = (e: { lngLat: maplibregl.LngLat }) => {
-      if (!dragging) return;
-      const d = structuredClone(useEditor.getState().data!);
-      moveNode(d, dragging, { pos: [e.lngLat.lng, e.lngLat.lat] });
-      (map.getSource('nodes') as GeoJSONSource).setData(nodesGeoJSON(d, useEditor.getState().selection, null));
-      (map.getSource('edges') as GeoJSONSource).setData(edgesGeoJSON(d, null));
-    };
-    const onUp = (e: { lngLat: maplibregl.LngLat }) => {
-      if (!dragging) return;
-      const id = dragging;
-      dragging = null;
-      map.getCanvas().style.cursor = '';
-      useEditor.getState().commit((d) => moveNode(d, id, { pos: [e.lngLat.lng, e.lngLat.lat] }));
-    };
-    map.on('mousedown', 'nodes', onDown);
-    map.on('touchstart', 'nodes', onDown);
-    map.on('mousemove', onMove);
-    map.on('touchmove', onMove);
-    map.on('mouseup', onUp);
-    map.on('touchend', onUp);
-
     return () => {
-      loaded.current = false;
-      map.remove();
-      mapRef.current = null;
+      cancelled = true;
+      dispose?.();
     };
+
+    function createMap() {
+      const map = new maplibregl.Map({ container: container.current!, style: STYLE, center: CAMPUS_CENTER, zoom: 16.5, maxZoom: 21 });
+      mapRef.current = map;
+      map.addControl(new maplibregl.NavigationControl({ visualizePitch: false }), 'top-right');
+      map.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-left');
+
+      map.on('load', () => {
+        addOverlayLayers(map);
+        loaded.current = true;
+        refresh();
+        setMapReady(true);
+      });
+
+      map.on('click', (e: MapMouseEvent) => {
+        const pos: LngLat = [e.lngLat.lng, e.lngLat.lat];
+        const hit = hitTest(map, e.point);
+        const s = useEditor.getState();
+        switch (s.outdoorTool) {
+          case 'select':
+            if (!hit) s.select(null);
+            else if ('node' in hit) s.select({ type: 'node', id: hit.node });
+            else s.select({ type: 'edge', from: hit.edge[0], to: hit.edge[1] });
+            break;
+          case 'path':
+            addPathPoint(pos, hit);
+            break;
+          case 'place':
+            setPlaceLocation(pos);
+            break;
+          case 'entrance':
+            addEntrance(pos, hit);
+            break;
+          case 'anchor':
+            setAnchorWorld(pos);
+            break;
+          case 'delete':
+            deleteHit(hit);
+            break;
+        }
+      });
+
+      // Arrastrar nodos exteriores con la herramienta de selección.
+      let dragging: string | null = null;
+      const onDown = (e: maplibregl.MapLayerMouseEvent | maplibregl.MapLayerTouchEvent) => {
+        const f = e.features?.[0];
+        if (useEditor.getState().outdoorTool !== 'select' || !f?.properties.draggable) return;
+        e.preventDefault();
+        dragging = f.properties.id as string;
+        useEditor.getState().select({ type: 'node', id: dragging });
+        map.getCanvas().style.cursor = 'grabbing';
+      };
+      const onMove = (e: { lngLat: maplibregl.LngLat }) => {
+        if (!dragging) return;
+        const d = structuredClone(useEditor.getState().data!);
+        moveNode(d, dragging, { pos: [e.lngLat.lng, e.lngLat.lat] });
+        (map.getSource('nodes') as GeoJSONSource).setData(nodesGeoJSON(d, useEditor.getState().selection, null));
+        (map.getSource('edges') as GeoJSONSource).setData(edgesGeoJSON(d, null));
+      };
+      const onUp = (e: { lngLat: maplibregl.LngLat }) => {
+        if (!dragging) return;
+        const id = dragging;
+        dragging = null;
+        map.getCanvas().style.cursor = '';
+        useEditor.getState().commit((d) => moveNode(d, id, { pos: [e.lngLat.lng, e.lngLat.lat] }));
+      };
+      map.on('mousedown', 'nodes', onDown);
+      map.on('touchstart', 'nodes', onDown);
+      map.on('mousemove', onMove);
+      map.on('touchmove', onMove);
+      map.on('mouseup', onUp);
+      map.on('touchend', onUp);
+
+      return () => {
+        loaded.current = false;
+        map.remove();
+        mapRef.current = null;
+      };
+    }
   }, []);
 
   function refresh() {
@@ -227,7 +243,7 @@ export function OutdoorEditor({ basemap, gpsPos }: { basemap: Basemap; gpsPos?: 
       });
       return [new maplibregl.Marker({ element: el }).setLngLat(p.location).addTo(map)];
     });
-  }, [data, selection]);
+  }, [data, selection, mapReady]);
 
   // Centrar el mapa en el lugar seleccionado.
   useEffect(() => {
@@ -245,7 +261,7 @@ export function OutdoorEditor({ basemap, gpsPos }: { basemap: Basemap; gpsPos?: 
     };
     if (map.isStyleLoaded()) apply();
     else map.once('load', apply);
-  }, [basemap]);
+  }, [basemap, mapReady]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -254,7 +270,7 @@ export function OutdoorEditor({ basemap, gpsPos }: { basemap: Basemap; gpsPos?: 
       gpsPos ? { type: 'FeatureCollection', features: [{ type: 'Feature', geometry: { type: 'Point', coordinates: gpsPos }, properties: {} }] } : EMPTY,
     );
     if (gpsPos) map.easeTo({ center: gpsPos, zoom: Math.max(map.getZoom(), 18) });
-  }, [gpsPos]);
+  }, [gpsPos, mapReady]);
 
   return <div ref={container} className={styles.canvas} />;
 }

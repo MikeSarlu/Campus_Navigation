@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useApp, useT } from '../../app/store';
 import type { CampusData, Place } from '../../core/data/types';
+import { parseRoomCode } from '../../core/data/codes';
 import { placesInCategory, search, type SearchResult } from '../../core/search';
 import { resultSubtitle, resultTitle } from './resultText';
 import styles from './search.module.css';
@@ -63,6 +64,7 @@ export function SearchPanel({ data }: { data: CampusData }) {
   const query = useApp((s) => s.query);
   const category = useApp((s) => s.category);
   const userPos = useApp((s) => s.location.fix?.pos);
+  const openReport = useApp((s) => s.openReport);
 
   const outcome = useMemo(() => search(query, data), [query, data]);
   const categoryResults = useMemo(
@@ -84,6 +86,7 @@ export function SearchPanel({ data }: { data: CampusData }) {
         <p className={styles.helpTitle}>{t('search.help.title')}</p>
         <p>{t('search.help.examples')}</p>
         <CodesExplainer data={data} />
+        <button type="button" className={styles.reportLink} onClick={() => openReport()}>{t('report.open')}</button>
       </div>
     );
   } else {
@@ -95,11 +98,16 @@ export function SearchPanel({ data }: { data: CampusData }) {
           <>
             <p className={styles.count} aria-live="polite">{results.length === 1 ? t('search.count.one') : t('search.count', { n: results.length })}</p>
             <ResultList results={results} />
+            {/* Código válido sin salón exacto en el mapa: puede ser un salón faltante. */}
+            {parseRoomCode(query) && !results.some((r) => r.type === 'room' && r.code === parseRoomCode(query)!.code) && (
+              <button type="button" className={styles.reportLink} onClick={() => openReport(query.trim())}>{t('report.open')}</button>
+            )}
           </>
         ) : (
           <div className={styles.help} aria-live="polite">
             <p className={styles.helpTitle}>{t('search.none.title', { query: query.trim() })}</p>
             <p>{t('search.none.tips')}</p>
+            <button type="button" className={styles.reportButton} onClick={() => openReport(query.trim())}>{t('report.missing')}</button>
             <CodesExplainer data={data} open />
           </div>
         )}

@@ -8,7 +8,7 @@ import { resultLocation } from '../../core/search';
 import { useNav } from '../navigation/navStore';
 import { resultTitle } from '../search/resultText';
 import { CAMPUS_BBOX, CAMPUS_CENTER, campusStyle } from './campusStyle';
-import { maplibregl } from './maplibre';
+import { maplibregl, maplibreReady } from './maplibre';
 import styles from './map.module.css';
 
 const EMPTY: FeatureCollection = { type: 'FeatureCollection', features: [] };
@@ -153,64 +153,77 @@ export function CampusMap() {
   const data = campus.status === 'ready' ? campus.data : null;
 
   useEffect(() => {
-    const [w, s, e, n] = CAMPUS_BBOX;
-    const map = new maplibregl.Map({
-      container: container.current!,
-      style: campusStyle(window.location.origin),
-      center: CAMPUS_CENTER,
-      zoom: 16.3,
-      minZoom: 14,
-      maxZoom: 20,
-      maxBounds: [[w - 0.01, s - 0.01], [e + 0.01, n + 0.01]],
-      // La rotación la controla el botón de orientación, no los gestos (evita giros accidentales).
-      dragRotate: false,
-      pitchWithRotate: false,
-      touchPitch: false,
-      attributionControl: { compact: true },
+    // El mapa se crea cuando el worker de MapLibre está listo (ver maplibre.ts).
+    let dispose: (() => void) | undefined;
+    let cancelled = false;
+    void maplibreReady.then(() => {
+      if (!cancelled) dispose = createMap();
     });
-    map.touchZoomRotate.disableRotation();
-    map.keyboard.disableRotation();
-    mapRef.current = map;
-
-    map.on('load', () => {
-      addLayers(map);
-      loaded.current = true;
-      for (const fn of pending.current.splice(0)) fn(map);
-    });
-
-    const openPlace = (e: maplibregl.MapLayerMouseEvent) => {
-      if (useNav.getState().pickingOnMap || useApp.getState().view === 'navigate') return;
-      const id = e.features?.[0]?.properties.id as string | undefined;
-      const s = useApp.getState();
-      const place = s.campus.status === 'ready' ? s.campus.data.places.find((p) => p.id === id) : undefined;
-      if (place) s.openDetail({ type: 'place', place });
-    };
-    map.on('click', 'places-dot', openPlace);
-    map.on('click', 'places-label', openPlace);
-    for (const layer of ['places-dot', 'places-label']) {
-      map.on('mouseenter', layer, () => (map.getCanvas().style.cursor = 'pointer'));
-      map.on('mouseleave', layer, () => (map.getCanvas().style.cursor = ''));
-    }
-    // Elegir el punto de partida tocando el mapa (cuando no hay GPS).
-    map.on('click', (e) => {
-      const nav = useNav.getState();
-      if (nav.phase === 'choosingStart' && nav.pickingOnMap) nav.startFrom([e.lngLat.lng, e.lngLat.lat], 'manual');
-    });
-    // Si el usuario mueve el mapa, deja de seguir su ubicación hasta que toque "Mi ubicación".
-    map.on('dragstart', () => useApp.getState().setFollowing(false));
-
     return () => {
-      loaded.current = false;
-      map.remove();
-      mapRef.current = null;
+      cancelled = true;
+      dispose?.();
     };
+
+    function createMap() {
+      const [w, s, e, n] = CAMPUS_BBOX;
+      const map = new maplibregl.Map({
+        container: container.current!,
+        style: campusStyle(),
+        center: CAMPUS_CENTER,
+        zoom: 16.3,
+        minZoom: 14,
+        maxZoom: 20,
+        maxBounds: [[w - 0.01, s - 0.01], [e + 0.01, n + 0.01]],
+        // La rotación la controla el botón de orientación, no los gestos (evita giros accidentales).
+        dragRotate: false,
+        pitchWithRotate: false,
+        touchPitch: false,
+        attributionControl: { compact: true },
+      });
+      map.touchZoomRotate.disableRotation();
+      map.keyboard.disableRotation();
+      mapRef.current = map;
+
+      map.on('load', () => {
+        addLayers(map);
+        loaded.current = true;
+        for (const fn of pending.current.splice(0)) fn(map);
+      });
+
+      const openPlace = (e: maplibregl.MapLayerMouseEvent) => {
+        if (useNav.getState().pickingOnMap || useApp.getState().view === 'navigate') return;
+        const id = e.features?.[0]?.properties.id as string | undefined;
+        const s = useApp.getState();
+        const place = s.campus.status === 'ready' ? s.campus.data.places.find((p) => p.id === id) : undefined;
+        if (place) s.openDetail({ type: 'place', place });
+      };
+      map.on('click', 'places-dot', openPlace);
+      map.on('click', 'places-label', openPlace);
+      for (const layer of ['places-dot', 'places-label']) {
+        map.on('mouseenter', layer, () => (map.getCanvas().style.cursor = 'pointer'));
+        map.on('mouseleave', layer, () => (map.getCanvas().style.cursor = ''));
+      }
+      // Elegir el punto de partida tocando el mapa (cuando no hay GPS).
+      map.on('click', (e) => {
+        const nav = useNav.getState();
+        if (nav.phase === 'choosingStart' && nav.pickingOnMap) nav.startFrom([e.lngLat.lng, e.lngLat.lat], 'manual');
+      });
+      // Si el usuario mueve el mapa, deja de seguir su ubicación hasta que toque "Mi ubicación".
+      map.on('dragstart', () => useApp.getState().setFollowing(false));
+
+      return () => {
+        loaded.current = false;
+        map.remove();
+        mapRef.current = null;
+      };
+    }
   }, []);
 
   /** Ejecuta `fn` cuando el mapa y sus capas están listos. */
   function whenReady(fn: (map: MapLibreMap) => void) {
     const map = mapRef.current;
-    if (!map) return;
-    if (loaded.current) fn(map);
+    // El mapa se crea de forma asíncrona: lo que llegue antes se aplica al cargar.
+    if (map && loaded.current) fn(map);
     else pending.current.push(fn);
   }
 

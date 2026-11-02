@@ -5,7 +5,7 @@ import type { SearchResult } from '../core/search';
 import type { LocationFix, LocationStatus } from '../core/sensors/location';
 
 export type Orientation = 'north' | 'heading';
-export type View = 'home' | 'search' | 'detail' | 'navigate';
+export type View = 'home' | 'search' | 'detail' | 'navigate' | 'report';
 
 const LANG_KEY = 'campus.lang';
 
@@ -50,7 +50,12 @@ interface AppState {
   /** El mapa sigue al usuario hasta que este lo mueve con el dedo. */
   following: boolean;
   heading: number | null;
-  toast: { message: MessageKey; id: number } | null;
+  toast: { message: MessageKey; id: number; params?: Record<string, string | number> } | null;
+  online: boolean;
+  /** Cuándo se descargó la app para usarse sin conexión (ISO), si ya se hizo. */
+  downloadedAt: string | null;
+  /** Código con que se abre el formulario de reporte (lo que el usuario buscó). */
+  reportCode: string;
 
   setLang: (lang: Lang) => void;
   setOrientation: (o: Orientation) => void;
@@ -59,6 +64,7 @@ interface AppState {
   openSearch: (category?: CategoryId) => void;
   openDetail: (result: SearchResult) => void;
   openNavigate: () => void;
+  openReport: (code?: string) => void;
   /** Cierra todo y vuelve al mapa inicial (p. ej. después de llegar). */
   goHome: () => void;
   /** Vuelve a la vista anterior usando el historial, igual que el botón Atrás del teléfono. */
@@ -67,11 +73,13 @@ interface AppState {
   setLocation: (location: AppState['location']) => void;
   setFollowing: (following: boolean) => void;
   setHeading: (heading: number | null) => void;
-  showToast: (message: MessageKey) => void;
+  showToast: (message: MessageKey, params?: Record<string, string | number>) => void;
+  setOnline: (online: boolean) => void;
+  setDownloadedAt: (downloadedAt: string) => void;
   hideToast: () => void;
 }
 
-const DEPTH: Record<View, number> = { home: 0, search: 1, detail: 2, navigate: 3 };
+const DEPTH: Record<View, number> = { home: 0, search: 1, detail: 2, report: 2, navigate: 3 };
 
 /** Cada vista abierta es una entrada del historial, para que el botón Atrás la cierre. */
 function pushView(view: View) {
@@ -92,6 +100,9 @@ export const useApp = create<AppState>((set, get) => ({
   following: false,
   heading: null,
   toast: null,
+  online: true,
+  downloadedAt: null,
+  reportCode: '',
 
   setLang: (lang) => {
     storeLang(lang);
@@ -123,6 +134,10 @@ export const useApp = create<AppState>((set, get) => ({
     pushView('navigate');
     set({ view: 'navigate', pushed: get().pushed + 1 });
   },
+  openReport: (code = '') => {
+    pushView('report');
+    set({ view: 'report', reportCode: code, pushed: get().pushed + 1 });
+  },
   goHome: () => {
     if (get().pushed > 0) history.go(-get().pushed);
   },
@@ -144,7 +159,9 @@ export const useApp = create<AppState>((set, get) => ({
   setLocation: (location) => set({ location }),
   setFollowing: (following) => set({ following }),
   setHeading: (heading) => set({ heading }),
-  showToast: (message) => set({ toast: { message, id: Date.now() } }),
+  showToast: (message, params) => set({ toast: { message, params, id: Date.now() } }),
+  setOnline: (online) => set({ online }),
+  setDownloadedAt: (downloadedAt) => set({ downloadedAt }),
   hideToast: () => set({ toast: null }),
 }));
 

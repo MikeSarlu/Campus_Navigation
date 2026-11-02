@@ -5,6 +5,8 @@ import { validateCampus } from '../core/data/validate';
 import { CampusMap } from '../features/map/CampusMap';
 import { MapControls } from '../features/map/MapControls';
 import { IndoorView } from '../features/indoor/IndoorView';
+import { ReportView } from '../features/report/ReportView';
+import { useReports } from '../features/report/reports';
 import { NavigationView } from '../features/navigation/NavigationView';
 import { useNav } from '../features/navigation/navStore';
 import { CategoryChips } from '../features/search/CategoryChips';
@@ -24,6 +26,15 @@ export function App() {
   const campus = useApp((s) => s.campus);
   const previewing = useApp((s) => s.previewingDraft);
   const indoor = useNav((s) => s.phase === 'indoor');
+  const online = useApp((s) => s.online);
+  const downloadedAt = useApp((s) => s.downloadedAt);
+
+  // Al volver la conexión se envían los reportes guardados como borrador.
+  useEffect(() => {
+    if (!online) return;
+    const sent = useReports.getState().sendDrafts();
+    if (sent) useApp.getState().showToast(sent === 1 ? 'report.flushed.one' : 'report.flushed', { n: sent });
+  }, [online]);
 
   useEffect(() => {
     document.documentElement.lang = lang;
@@ -64,6 +75,13 @@ export function App() {
         <header className={styles.top}>
           {previewing && <p className={styles.preview}>{t('preview.banner')}</p>}
           <SearchBar />
+          {!online && (
+            <p className={styles.offline} role="status">
+              {downloadedAt
+                ? t('offline.since', { date: new Date(downloadedAt).toLocaleDateString(lang, { day: 'numeric', month: 'short', year: 'numeric' }) })
+                : t('offline.banner')}
+            </p>
+          )}
           {view === 'home' && <CategoryChips />}
         </header>
       )}
@@ -81,6 +99,7 @@ export function App() {
         </div>
       )}
       {view === 'navigate' && indoor && <IndoorView />}
+      {view === 'report' && <ReportView />}
       <Toast />
     </main>
   );

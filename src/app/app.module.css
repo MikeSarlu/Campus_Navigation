@@ -84,3 +84,16 @@
   box-shadow: var(--shadow);
   pointer-events: auto;
 }
+
+/* Aviso discreto: la app sigue funcionando sin conexión. */
+.offline {
+  justify-self: start;
+  margin: var(--space-2) 0 0;
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-small);
+  font-weight: 700;
+  color: #fff;
+  background: #3d3d3a;
+  border-radius: var(--radius-pill);
+  display: inline-block;
+}

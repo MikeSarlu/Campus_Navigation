@@ -1,0 +1,182 @@
+.screen {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background: var(--color-bg);
+}
+
+.header {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  padding: max(var(--space-2), env(safe-area-inset-top)) var(--space-3) var(--space-2);
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.iconButton {
+  display: grid;
+  place-items: center;
+  width: var(--touch-min);
+  height: var(--touch-min);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+}
+
+.body {
+  overflow-y: auto;
+  padding: var(--space-4) var(--space-4) max(var(--space-4), env(safe-area-inset-bottom));
+}
+
+.form {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.form p {
+  margin: 0;
+}
+
+.field {
+  display: grid;
+  gap: var(--space-1);
+  font-weight: 700;
+}
+
+.field input,
+.field select,
+.field textarea {
+  min-height: 48px;
+  padding: var(--space-2) var(--space-3);
+  font-weight: 500;
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+.hint {
+  display: block;
+  font-size: var(--font-size-small);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.check {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  font-weight: 600;
+}
+
+.check input {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+}
+
+.primary,
+.secondary {
+  min-height: 52px;
+  padding: 0 var(--space-4);
+  font-size: 18px;
+  font-weight: 800;
+  border-radius: var(--radius);
+}
+
+.primary {
+  color: var(--color-on-accent);
+  background: var(--color-accent);
+  border: 0;
+}
+
+.primary:disabled {
+  opacity: 0.4;
+}
+
+.secondary {
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+}
+
+/* Confirmación: verde si se envió, ámbar si quedó como borrador sin conexión. */
+.sent,
+.saved {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  font-size: 18px;
+  font-weight: 600;
+  border: var(--border-width) solid;
+  border-radius: var(--radius);
+}
+
+.sent p,
+.saved p {
+  margin: 0;
+}
+
+.sent {
+  background: #e6f4ea;
+  border-color: var(--color-arrival);
+}
+
+.saved {
+  background: #fff4d6;
+  border-color: #8a6100;
+}
+
+.mine {
+  margin-top: var(--space-4);
+}
+
+.mine h3 {
+  margin: 0 0 var(--space-2);
+  font-size: 17px;
+}
+
+.mine ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mine li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 48px;
+  border-bottom: 1px solid #b9bcb5;
+}
+
+.code {
+  font-weight: 700;
+}
+
+.badgeSent,
+.badgeDraft {
+  padding: 2px var(--space-2);
+  font-size: var(--font-size-small);
+  font-weight: 700;
+  border: var(--border-width) solid;
+  border-radius: var(--radius-pill);
+}
+
+.badgeSent {
+  color: var(--color-arrival);
+}
+
+.badgeDraft {
+  color: #6b4700;
+}

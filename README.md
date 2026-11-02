@@ -43,6 +43,19 @@ Abre `http://localhost:5173/editor` (o `/editor` en el sitio publicado). Los tex
 - **Ver en la app** (barra superior del editor) abre la app con tu borrador (`/?datos=editor`) para revisarlo antes de exportar. Funciona en el mismo navegador donde editas.
 - **GPS en el celular:** el navegador solo da la ubicación en sitios HTTPS. Con `npm run dev` abierto desde el celular por la red local no funciona; usa la versión publicada en Vercel.
 
+## Uso sin conexión (PWA)
+
+- En la primera visita, la app descarga automáticamente todo lo necesario (≈4.8 MB): código, mapa base del campus, fuentes, vista 3D y `campus.json`. Desde ahí funciona sin internet, incluida la navegación.
+- Sin conexión aparece el aviso "Sin conexión · descargado el …".
+- Cuando se publica una versión nueva, se descarga en segundo plano y se aplica la próxima vez que el usuario esté en el mapa inicial, nunca a media navegación.
+- El editor (`/editor`) no se descarga: solo funciona con conexión.
+- El service worker solo existe en la versión compilada. Para probarlo en local: `npm run build` y `npm run preview`.
+- Los íconos se generan con `python scripts/make-icons.py` (requiere Pillow).
+
+## Reportes de salones faltantes
+
+Se abren desde la búsqueda: "¿Falta un salón? Repórtalo" o "Reportar salón faltante" cuando no hay resultados. El formulario propone el edificio y el piso a partir del código. **En el prototipo el envío es simulado:** los reportes se guardan en el teléfono como *Borrador* (sin conexión) o *Enviado* (con conexión), y los borradores pasan a *Enviado* solos al volver la conexión.
+
 ## Ajustes para calibrar en las pruebas
 
 Valores pensados para ajustarse después de probar en campus:

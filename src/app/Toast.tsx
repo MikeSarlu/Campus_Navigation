@@ -19,7 +19,7 @@ export function Toast() {
     <div className={styles.toastRegion} role="status" aria-live="polite">
       {toast && (
         <button type="button" key={toast.id} className={styles.toast} onClick={hide}>
-          {t(toast.message)}
+          {t(toast.message, toast.params)}
         </button>
       )}
     </div>
