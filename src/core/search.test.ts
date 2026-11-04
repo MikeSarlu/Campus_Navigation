@@ -8,7 +8,8 @@ const campus = (): CampusData => JSON.parse(readFileSync('public/data/campus.jso
 const withRoom = (): CampusData => {
   const d = campus();
   const cn = d.buildings.find((b) => b.siglas === 'CN')!;
-  cn.floors.push({ level: 2, outline: [], rooms: [{ code: 'CN-220', polygon: [], doorNodeId: 'door' }, { code: 'CN-221', polygon: [], doorNodeId: 'door2' }] });
+  // Reemplaza los pisos levantados para que la prueba no dependa del contenido real de campus.json.
+  cn.floors = [{ level: 2, outline: [], rooms: [{ code: 'CN-220', polygon: [], doorNodeId: 'door' }, { code: 'CN-221', polygon: [], doorNodeId: 'door2' }] }];
   return d;
 };
 
